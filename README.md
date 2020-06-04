@@ -19,3 +19,6 @@ For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 >>>>>>> e5c8153... initial commit
+
+### TODOs
+- bottom menu has a solid background color. It must be fixed as a transparent. UI problem.

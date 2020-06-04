@@ -198,7 +198,55 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
 
+
             
+
+            //if (_selectedItemIndex != 0)
+            // plus-sign add-button
+            GestureDetector(
+              onTap: () {
+                log('tapped plus: adding new value');
+              },
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 150),
+                curve: Curves.bounceInOut,
+                padding: EdgeInsets.all(5.0),
+                width: _selectedItemIndex == 0 ? 0.0 : 75.0,
+                height: _selectedItemIndex == 0 ? 0.0 : 75.0,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(90.0)),
+                  color: Colors.red,
+                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: <Widget>[
+
+                    // vertical line
+                    Container(
+                      width: 8,
+                      height: 45,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                    ),
+
+                    //horizontal line
+                    Container(
+                      width: 45,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            //Padding(padding: EdgeInsets.all(5.0),),
             
             // Bottom Tab Menu
             BottomTab(
