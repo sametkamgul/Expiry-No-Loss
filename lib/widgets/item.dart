@@ -33,10 +33,10 @@ class ItemWidget extends StatelessWidget {
                    : itemType == 'stock' ? Color(0xFF6B75E3)
                    : itemType == 'to-do' ? Color(0xFF7BB076)
                    : itemType == 'to-buy' ? Color(0xFFD86579)
-                   : Colors.white,
-              //color: Color(0xFFC88264),
+                   : Colors.blue,
               border: Border.all(
                 width: 3,
+                color: Colors.white   // TODO: maybe remove the stroke color!!!
               ),
               borderRadius: new BorderRadius.all(
                 const Radius.circular(40.0),
@@ -66,7 +66,7 @@ class ItemWidget extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        itemCountdown.toString(),
+                        itemCountdown.toString() + ' days',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 14.0,
