@@ -176,9 +176,9 @@ class SecondRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      /* appBar: AppBar(
         title: Text("Second Route"),
-      ),
+      ), */
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -194,7 +194,7 @@ class SecondRoute extends StatelessWidget {
                 )
               ),
               child: Container(
-                width: MediaQuery.of(context).size.width * 0.5,
+                width: MediaQuery.of(context).size.width * 0.75,
                 alignment: Alignment.center,
                 child: Container(
                     child: TextField(
@@ -229,7 +229,7 @@ class SecondRoute extends StatelessWidget {
                 )
               ),
               child: Container(
-                width: MediaQuery.of(context).size.width * 0.5,
+                width: MediaQuery.of(context).size.width * 0.75,
                 alignment: Alignment.center,
                 child: Container(
                     child: TextField(
@@ -252,24 +252,27 @@ class SecondRoute extends StatelessWidget {
               ),
             ),
 
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                RaisedButton(
-                  onPressed: () {
-                    // TODO: save the edited data
-                    Navigator.pop(context);
-                  },
-                  child: Text('Save'),
-                ),
-                RaisedButton(
-                  onPressed: () {
-                    Navigator.pop(context, 'saveCancelled');
-                  },
-                  child: Text('Cancel'),
-                ),
-              ],
+            Container(
+              width: MediaQuery.of(context).size.width * 0.75,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  RaisedButton(
+                    onPressed: () {
+                      // TODO: save the edited data
+                      Navigator.pop(context);
+                    },
+                    child: Text('Save'),
+                  ),
+                  RaisedButton(
+                    onPressed: () {
+                      Navigator.pop(context, 'saveCancelled');
+                    },
+                    child: Text('Cancel'),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
