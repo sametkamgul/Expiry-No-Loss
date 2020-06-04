@@ -64,7 +64,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
             Expanded(
               child: ListView(      
-                //shrinkWrap: true,          
                 children: <Widget>[
                   ItemWidget(itemType: 'expiry', itemName: 'Portakal', itemDateTime: '04/06/2020', itemCountdown: 50),
                   ItemWidget(itemType: 'expiry', itemName: 'Elma', itemDateTime: '05/06/2020', itemCountdown: 10),
