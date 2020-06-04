@@ -24,6 +24,7 @@ class ItemWidget extends StatefulWidget {
 
 class _ItemWidgetState extends State<ItemWidget> {
   bool isEditing = false;
+  bool isEditingContent = false;
   bool isCancelled = false;
 
   @override
@@ -123,11 +124,23 @@ class _ItemWidgetState extends State<ItemWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'edit',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20.0,
+            GestureDetector(
+              onTap: () {
+                print('editing content');
+                setState(() {
+                  isEditingContent = true;
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SecondRoute()),
+                  );
+                });
+              },
+              child: Text(
+                'edit',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20.0,
+                ),
               ),
             ),
             Text(
@@ -155,6 +168,113 @@ class _ItemWidgetState extends State<ItemWidget> {
           ],
         ),
       )
+    );
+  }
+}
+
+class SecondRoute extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Second Route"),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+
+            // item-name-texfield
+            Container(
+              decoration: BoxDecoration(
+                color: Color(0xFFC88264),
+                borderRadius: new BorderRadius.all(
+                  Radius.circular(40.0),
+                )
+              ),
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.5,
+                alignment: Alignment.center,
+                child: Container(
+                    child: TextField(
+                      keyboardType: TextInputType.text,
+                      textInputAction: TextInputAction.done,
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                      
+                      decoration: InputDecoration(
+                        
+                        border: InputBorder.none,
+                        hintText: 'item name',
+                        hintStyle: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+              ),
+            ),
+
+            //padding
+            Padding(padding: EdgeInsets.all(5.0)),
+
+            //item-date-texfield
+            Container(
+              decoration: BoxDecoration(
+                color: Color(0xFFC88264),
+                borderRadius: new BorderRadius.all(
+                  Radius.circular(40.0),
+                )
+              ),
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.5,
+                alignment: Alignment.center,
+                child: Container(
+                    child: TextField(
+                      keyboardType: TextInputType.text,
+                      textInputAction: TextInputAction.done,
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                      
+                      decoration: InputDecoration(
+                        
+                        border: InputBorder.none,
+                        hintText: 'dd/mm/yyyy',
+                        hintStyle: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+              ),
+            ),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                RaisedButton(
+                  onPressed: () {
+                    // TODO: save the edited data
+                    Navigator.pop(context);
+                  },
+                  child: Text('Save'),
+                ),
+                RaisedButton(
+                  onPressed: () {
+                    Navigator.pop(context, 'saveCancelled');
+                  },
+                  child: Text('Cancel'),
+                ),
+              ],
+            ),
+          ],
+        ),
+        
+      ),
     );
   }
 }

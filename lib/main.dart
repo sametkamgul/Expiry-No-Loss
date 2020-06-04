@@ -26,9 +26,10 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key key, this.data, this.title}) : super(key: key);
 
   final String title;
+  final String data;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -39,13 +40,18 @@ class _MyHomePageState extends State<MyHomePage> {
   bool biggerStock = false;
   bool biggerToDo = false;
   bool biggerToBuy = false;
+  String _data = 'init';
+
+  _MyHomePageState();
 
   @override
   Widget build(BuildContext context) {
     // full screen width and height
-    double screenWidth = MediaQuery.of(context).size.width;
+    //double screenWidth = MediaQuery.of(context).size.width;
     //double screenHeight = MediaQuery.of(context).size.height;
-    
+  
+    print(widget.data.toString());
+  
     return Scaffold(
       backgroundColor: Colors.greenAccent,
       appBar: AppBar(
@@ -63,7 +69,6 @@ class _MyHomePageState extends State<MyHomePage> {
             
             //Expanded(child: Text('tetet')),
             
-
             Container(
               child: Expanded(
                 child: ListView(      
@@ -84,9 +89,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             
-
-            
-
             // Bottom Tab Menu
             BottomTab(tab1: 'expiry', tab2: 'stock', tab3: 'to-do', tab4: 'to-buy'),
           ],
