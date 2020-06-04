@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:expiry_no_loss/components/dbhelper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -6,7 +9,6 @@ class ItemWidget extends StatefulWidget {
   final String itemName;
   final String itemDateTime;
   final int itemCountdown;
-
 
   ItemWidget(
     {
@@ -26,6 +28,7 @@ class _ItemWidgetState extends State<ItemWidget> {
   bool isEditing = false;
   bool isEditingContent = false;
   bool isCancelled = false;
+  int selectedItemIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -33,10 +36,35 @@ class _ItemWidgetState extends State<ItemWidget> {
       padding: EdgeInsets.only(bottom: 5.0),
       child: GestureDetector(
         onTap: () {
-          print('tap:       ' + widget.itemType + ', ' + widget.itemName + ', ' + widget.itemDateTime + ', ' + widget.itemCountdown.toString());
+          log('tap:       ' + widget.itemType + ', ' + widget.itemName + ', ' + widget.itemDateTime + ', ' + widget.itemCountdown.toString());
+          if (widget.itemType == 'expiry') {
+            setState(() {
+              this.selectedItemIndex = 1;
+            });
+          }
+          else if (widget.itemType == 'stock') {
+            setState(() {
+              this.selectedItemIndex = 2;
+            });
+          }
+          else if (widget.itemType == 'to-do') {
+            setState(() {
+              this.selectedItemIndex = 3;
+            });
+          }
+          else if (widget.itemType == 'to-buy') {
+            setState(() {
+              this.selectedItemIndex = 4;
+            });
+          }
+          else {
+            setState(() {
+              this.selectedItemIndex = 0;
+            });
+          }
         },
         onLongPress: () {
-          print('longpress: ' + widget.itemType + ', ' + widget.itemName + ', ' + widget.itemDateTime + ', ' + widget.itemCountdown.toString());
+          log('longpress: ' + widget.itemType + ', ' + widget.itemName + ', ' + widget.itemDateTime + ', ' + widget.itemCountdown.toString());
           setState(() {
             isEditing = true;
           });
@@ -49,8 +77,7 @@ class _ItemWidgetState extends State<ItemWidget> {
         ),
       ),
     );
-
-  }
+  } 
 
   Widget itemNormal() {
     return new Container(
@@ -124,44 +151,57 @@ class _ItemWidgetState extends State<ItemWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            GestureDetector(
-              onTap: () {
-                print('editing content');
-                setState(() {
-                  isEditingContent = true;
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SecondRoute()),
-                  );
-                });
-              },
+            Container(
+              alignment: Alignment.center,
+              width: 100.0,
+              child: GestureDetector(
+                onTap: () {
+                  log('editing content');
+                  setState(() {
+                    isEditingContent = true;
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SecondRoute()),
+                    );
+                  });
+                },
+                child: Text(
+                  'edit',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.0,
+                  ),
+                ),
+              ),
+            ),
+          
+            Container(
+              alignment: Alignment.center,
+              width: 100.0,
               child: Text(
-                'edit',
+                'delete',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20.0,
                 ),
               ),
             ),
-            Text(
-              'delete',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20.0,
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                print('cancel');
-                setState(() {
-                  isEditing = false;
-                });
-              },
-              child: Text(
-                'cancel',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20.0,
+            Container(
+              alignment: Alignment.center,
+              width: 100.0,
+              child: GestureDetector(
+                onTap: () {
+                  log('cancel');
+                  setState(() {
+                    isEditing = false;
+                  });
+                },
+                child: Text(
+                  'cancel',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.0,
+                  ),
                 ),
               ),
             ),
@@ -195,25 +235,21 @@ class SecondRoute extends StatelessWidget {
               ),
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.75,
-                alignment: Alignment.center,
-                child: Container(
-                    child: TextField(
-                      keyboardType: TextInputType.text,
-                      textInputAction: TextInputAction.done,
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                      
-                      decoration: InputDecoration(
-                        
-                        border: InputBorder.none,
-                        hintText: 'item name',
-                        hintStyle: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
+                child: TextField(
+                  textAlign: TextAlign.center,
+                  keyboardType: TextInputType.text,
+                  textInputAction: TextInputAction.done,
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'item name',
+                    hintStyle: TextStyle(
+                      color: Colors.white,
                     ),
                   ),
+                ),
               ),
             ),
 
@@ -231,24 +267,23 @@ class SecondRoute extends StatelessWidget {
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.75,
                 alignment: Alignment.center,
-                child: Container(
-                    child: TextField(
-                      keyboardType: TextInputType.text,
-                      textInputAction: TextInputAction.done,
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                      
-                      decoration: InputDecoration(
-                        
-                        border: InputBorder.none,
-                        hintText: 'dd/mm/yyyy',
-                        hintStyle: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
+                child: TextField(
+                  textAlign: TextAlign.center,
+                  keyboardType: TextInputType.text,
+                  textInputAction: TextInputAction.done,
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                  
+                  decoration: InputDecoration(
+                    
+                    border: InputBorder.none,
+                    hintText: 'dd/mm/yyyy',
+                    hintStyle: TextStyle(
+                      color: Colors.white,
                     ),
                   ),
+                ),
               ),
             ),
 

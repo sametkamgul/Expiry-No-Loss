@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 class BottomTab extends StatefulWidget {
@@ -5,12 +7,15 @@ class BottomTab extends StatefulWidget {
   final String tab2;
   final String tab3;
   final String tab4;
+  final Function(int) onSelectedItemIndexChange;
+
   BottomTab({Key key,
     @required this.tab1,
     @required this.tab2,
     @required this.tab3,
-    @required this.tab4}
-  ) : super(key: key);
+    @required this.tab4,
+    this.onSelectedItemIndexChange,
+  }) : super(key: key);
 
   @override
   _BottomTabState createState() => _BottomTabState();
@@ -45,13 +50,24 @@ class _BottomTabState extends State<BottomTab> {
               width: screenWidth,
               child: GestureDetector(
                 onTap: () {
-                  print(widget.tab1);
+                  if (this.biggerExpiry == true){
+                    widget.onSelectedItemIndexChange(0);
+                  }
+                  else{
+                    widget.onSelectedItemIndexChange(1);
+                  }
                   setState(() {
                     this.biggerExpiry = !this.biggerExpiry;
                     this.biggerStock = false;
                     this.biggerToDo = false;
                     this.biggerToBuy = false;
                   });
+                  log(this.biggerExpiry.toString());
+                  log(this.biggerStock.toString());
+                  log(this.biggerToDo.toString());
+                  log(this.biggerToBuy.toString());
+                  log(widget.tab1);
+                
                 },
                 child: new Container(
                   width: 4.0 * screenWidth / 4.0,
@@ -100,13 +116,19 @@ class _BottomTabState extends State<BottomTab> {
               color: Colors.transparent,
               child: GestureDetector(
                 onTap: () {
-                  print(widget.tab2);
+                  if (this.biggerStock == true){
+                    widget.onSelectedItemIndexChange(0);
+                  }
+                  else{
+                    widget.onSelectedItemIndexChange(2);
+                  }
                   setState(() {
-                    this.biggerExpiry = false;
                     this.biggerStock = !this.biggerStock;
+                    this.biggerExpiry = false;
                     this.biggerToDo = false;
                     this.biggerToBuy = false;
                   });
+                  
                 },
                 child: new Container(
                   width: screenWidth / 4.0,
@@ -155,13 +177,23 @@ class _BottomTabState extends State<BottomTab> {
               color: Colors.transparent,
               child: GestureDetector(
                 onTap: () {
-                  print(widget.tab3);
+                  if (this.biggerExpiry == false && this.biggerStock == false && this.biggerToDo == true && this.biggerToBuy == false){
+                    widget.onSelectedItemIndexChange(0);
+                  }
+                  else{
+                    widget.onSelectedItemIndexChange(3);
+                  }
                   setState(() {
+                    this.biggerToDo = !this.biggerToDo;
                     this.biggerExpiry = false;
                     this.biggerStock = false;
-                    this.biggerToDo = !this.biggerToDo;
                     this.biggerToBuy = false;
                   });
+                  log(this.biggerExpiry.toString());
+                  log(this.biggerStock.toString());
+                  log(this.biggerToDo.toString());
+                  log(this.biggerToBuy.toString());
+                  log('tab: ' + widget.tab3);
                 },
                 child: new Container(
                   width: screenWidth / 4.0,
@@ -210,13 +242,23 @@ class _BottomTabState extends State<BottomTab> {
               color: Colors.transparent,
               child: GestureDetector(
                 onTap: () {
-                  print(widget.tab4);
+                  if (this.biggerExpiry == false && this.biggerStock == false && this.biggerToDo == false && this.biggerToBuy == true){
+                    widget.onSelectedItemIndexChange(0);
+                  }
+                  else{
+                    widget.onSelectedItemIndexChange(4);
+                  }
                   setState(() {
+                    this.biggerToBuy = !this.biggerToBuy;
                     this.biggerExpiry = false;
                     this.biggerStock = false;
                     this.biggerToDo = false;
-                    this.biggerToBuy = !this.biggerToBuy;
                   });
+                  log(this.biggerExpiry.toString());
+                  log(this.biggerStock.toString());
+                  log(this.biggerToDo.toString());
+                  log(this.biggerToBuy.toString());
+                  log(widget.tab4);
                 },
                 child: new Container(
                   width: screenWidth / 4.0,
