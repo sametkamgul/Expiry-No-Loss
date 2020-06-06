@@ -44,6 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool biggerToDo = false;
   bool biggerToBuy = false;
   int selectedItemIndex = 0;
+  int counter = 0;
 
   @override
   void initState() {
@@ -104,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // When the database is first created, create a table to store dogs.
       onCreate: (db, version) {
         return db.execute(
-          "CREATE TABLE items(id INTEGER PRIMARY KEY, itemName TEXT, itemDate INTEGER)",
+          "CREATE TABLE items(id INTEGER PRIMARY KEY, itemType TEXT, itemName TEXT, itemDate TEXT, itemAmount INTEGER)",
         );
       },
       // Set the version. This executes the onCreate function and provides a
@@ -141,8 +142,10 @@ class _MyHomePageState extends State<MyHomePage> {
     return List.generate(maps.length, (i) {
       return Item(
         id: maps[i]['id'],
+        itemType: maps[i]['itemType'],
         itemName: maps[i]['itemName'],
         itemDate: maps[i]['itemDate'],
+        itemAmount: maps[i]['itemAmount'],
       );
     });
   }
@@ -176,11 +179,38 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  Future<dynamic> getUserData (String dataChoice) {
+    dynamic mockData;
+    if (dataChoice == 'expiry') {
+      // TODO: return expiry data here for listbuilder widget
+      return mockData;
+    }
+    else if ( dataChoice == 'stock') {
+      // TODO: return stock data here for listbuilder widget
+      return mockData;
+    }
+    else if ( dataChoice == 'to-do') {
+      // TODO: return to-do data here for listbuilder widget
+      return mockData;
+    }
+    else if ( dataChoice == 'to-buy') {
+      // TODO: return to-buy data here for listbuilder widget
+      return mockData;
+    }
+    else if ( dataChoice == 'all') {
+      // TODO: return all data here for listbuilder widget
+      return mockData;
+    }
+    else {
+      return mockData;
+    }    
+  }
+/* 
   var fido = Item(
     id: 0,
     itemName: 'Fido',
-    itemDate: 35,
-  );
+    itemDate: '23/03/2021',
+  ); */
 
 
   @override
@@ -223,6 +253,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
                   itemBuilder: (BuildContext ctxt, int indexAll) {
                     log(listItemsAll.length.toString());
+                    getUserData('all');
                     //log(index.toString() + ': ' + listItems[index].toString());
                     return new ItemWidget(itemType: listItemsAll[indexAll]['itemType'], itemName: listItemsAll[indexAll]['itemName'], itemDateTime: listItemsAll[indexAll]['itemDate'], itemCountdown: 9);
                   }
@@ -312,35 +343,46 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               onTap: () async {
                 log('tapped plus: adding new value');
-                print(await items());
-                var fido = Item(
+                //print(await items());
+                /* var fido = Item(
                   id: 1,
-                  itemName: 'Fido',
-                  itemDate: 35,
+                  itemType: 'Expiry',
+                  itemName: 'Peynir',
+                  itemDate: '27/05/2023',
+                  itemAmount: 10,
                 );
 
                 // Insert a dog into the database.
-                await insertItem(fido);
+                await insertItem(fido); */
 
                 // Print the list of dogs (only Fido for now).
-                print(await items());
+                //print(await items());
 
                 // Update Fido's age and save it to the database.
-                fido = Item(
-                  id: fido.id,
-                  itemName: fido.itemName,
-                  itemDate: fido.itemDate + 7,
+                /* fido = Item(
+                  id: 2,
+                  itemType: 'Expiry',
+                  itemName: 'Ekmek',
+                  itemDate: '19/09/2021',
+                  itemAmount: 11,
                 );
-                await updateItem(fido);
-
-                // Print Fido's updated information.
-                print(await items());
+                await insertItem(fido); */
+                var fido = Item(
+                  id: counter,
+                  itemType: selectedItemIndex.toString(),
+                  itemName: 'Ekmek',
+                  itemDate: '19/09/2021',
+                  itemAmount: 32
+                );
+                counter++;
+                await insertItem(fido);
 
                 // Delete Fido from the database.
                 //await deleteDog(fido.id);
 
                 // Print the list of dogs (empty).
                 print(await items());
+
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => AddNewItemPage()),

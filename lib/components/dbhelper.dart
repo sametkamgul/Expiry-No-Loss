@@ -5,16 +5,20 @@ import 'package:sqflite/sqflite.dart';
 
 class Item {
   final int id;
+  final String itemType;
   final String itemName;
-  final int itemDate;
+  final String itemDate;
+  final int itemAmount;
 
-  Item({this.id, this.itemName, this.itemDate});
+  Item({this.id, this.itemType, this.itemName, this.itemDate, this.itemAmount});
 
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'itemType': itemType,
       'itemName': itemName,
       'itemDate': itemDate,
+      'itemAmount' : itemAmount,
     };
   }
 
@@ -22,6 +26,6 @@ class Item {
   // each dog when using the print statement.
   @override
   String toString() {
-    return 'Item{id: $id, itemNAme: $itemName, itemDate: $itemDate}';
+    return 'Item{id: $id, itemType: $itemType, itemName: $itemName, itemDate: $itemDate, itemAmount: $itemAmount}';
   }
 }
