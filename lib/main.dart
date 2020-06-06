@@ -1,14 +1,14 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 import 'widgets/item.dart';
 import 'widgets/bottomTab.dart';
+import 'components/dbhelper.dart';
 
 void main() {
-  runApp(MyApp());
+    runApp(MyApp());
 }
-
-
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -44,7 +44,12 @@ class _MyHomePageState extends State<MyHomePage> {
   bool biggerToDo = false;
   bool biggerToBuy = false;
   int selectedItemIndex = 0;
-  String _data = 'init';
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
 
   //mocking data
   List listItemExpiry = [
@@ -78,10 +83,110 @@ class _MyHomePageState extends State<MyHomePage> {
   
   _MyHomePageState();
 
+  Future<void> removeDatabase() async {
+    log('database is deleted.');
+    // Get a location using getDatabasesPath
+    var databasesPath = await getDatabasesPath();
+    String path = join(databasesPath, 'items.db');
+
+    // Delete the database
+    await deleteDatabase(path);
+  }
+
+  Future<dynamic> createDatabase() async {
+    final database = openDatabase(
+      // Set the path to the database. Note: Using the `join` function from the
+      // `path` package is best practice to ensure the path is correctly
+      // constructed for each platform.
+      
+      join(await getDatabasesPath(), 'items.db'),
+      
+      // When the database is first created, create a table to store dogs.
+      onCreate: (db, version) {
+        return db.execute(
+          "CREATE TABLE items(id INTEGER PRIMARY KEY, itemName TEXT, itemDate INTEGER)",
+        );
+      },
+      // Set the version. This executes the onCreate function and provides a
+      // path to perform database upgrades and downgrades.
+      version: 1,
+    );
+    return database;
+  }
+  
+  
+
+  Future<void> insertItem(Item item) async {
+    // Get a reference to the database.
+    final Database db = await createDatabase();
+
+    // Insert the Dog into the correct table. Also specify the
+    // `conflictAlgorithm`. In this case, if the same dog is inserted
+    // multiple times, it replaces the previous data.
+    await db.insert(
+      'items',
+      item.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<List<Item>> items() async {
+    // Get a reference to the database.
+    final Database db = await createDatabase();
+
+    // Query the table for all The Dogs.
+    final List<Map<String, dynamic>> maps = await db.query('items');
+
+    // Convert the List<Map<String, dynamic> into a List<Dog>.
+    return List.generate(maps.length, (i) {
+      return Item(
+        id: maps[i]['id'],
+        itemName: maps[i]['itemName'],
+        itemDate: maps[i]['itemDate'],
+      );
+    });
+  }
+
+  Future<void> updateItem(Item item) async {
+    // Get a reference to the database.
+    final db = await createDatabase();
+
+    // Update the given Dog.
+    await db.update(
+      'items',
+      item.toMap(),
+      // Ensure that the Dog has a matching id.
+      where: "id = ?",
+      // Pass the Dog's id as a whereArg to prevent SQL injection.
+      whereArgs: [item.id],
+    );
+  }
+
+  Future<void> deleteItem(int id) async {
+    // Get a reference to the database.
+    final db = await createDatabase();
+
+    // Remove the Dog from the database.
+    await db.delete(
+      'items',
+      // Use a `where` clause to delete a specific dog.
+      where: "id = ?",
+      // Pass the Dog's id as a whereArg to prevent SQL injection.
+      whereArgs: [id],
+    );
+  }
+
+  var fido = Item(
+    id: 0,
+    itemName: 'Fido',
+    itemDate: 35,
+  );
+
+
   @override
   Widget build(BuildContext context) {
     int _selectedItemIndex;
-
+    
     setState(() {
       _selectedItemIndex = this.selectedItemIndex;
     });
@@ -95,7 +200,7 @@ class _MyHomePageState extends State<MyHomePage> {
     log('loaded:' + _selectedItemIndex.toString());
   
     return Scaffold(
-      backgroundColor: Colors.greenAccent,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.indigoAccent,
         // Here we take the value from the MyHomePage object that was created by
@@ -199,13 +304,47 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
 
 
-            
-
             //if (_selectedItemIndex != 0)
             // plus-sign add-button
             GestureDetector(
-              onTap: () {
+              onLongPress: () {
+                removeDatabase();
+              },
+              onTap: () async {
                 log('tapped plus: adding new value');
+                print(await items());
+                var fido = Item(
+                  id: 1,
+                  itemName: 'Fido',
+                  itemDate: 35,
+                );
+
+                // Insert a dog into the database.
+                await insertItem(fido);
+
+                // Print the list of dogs (only Fido for now).
+                print(await items());
+
+                // Update Fido's age and save it to the database.
+                fido = Item(
+                  id: fido.id,
+                  itemName: fido.itemName,
+                  itemDate: fido.itemDate + 7,
+                );
+                await updateItem(fido);
+
+                // Print Fido's updated information.
+                print(await items());
+
+                // Delete Fido from the database.
+                //await deleteDog(fido.id);
+
+                // Print the list of dogs (empty).
+                print(await items());
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AddNewItemPage()),
+                );
               },
               child: AnimatedContainer(
                 duration: Duration(milliseconds: 150),
@@ -260,6 +399,112 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     
+    );
+  }
+}
+
+
+class AddNewItemPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      /* appBar: AppBar(
+        title: Text("Second Route"),
+      ), */
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+
+            // item-name-texfield
+            Container(
+              decoration: BoxDecoration(
+                color: Color(0xFFC88264),
+                borderRadius: new BorderRadius.all(
+                  Radius.circular(40.0),
+                )
+              ),
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.75,
+                child: TextField(
+                  textAlign: TextAlign.center,
+                  keyboardType: TextInputType.text,
+                  textInputAction: TextInputAction.done,
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'item name',
+                    hintStyle: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            //padding
+            Padding(padding: EdgeInsets.all(5.0)),
+
+            //item-date-texfield
+            Container(
+              decoration: BoxDecoration(
+                color: Color(0xFFC88264),
+                borderRadius: new BorderRadius.all(
+                  Radius.circular(40.0),
+                )
+              ),
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.75,
+                alignment: Alignment.center,
+                child: TextField(
+                  textAlign: TextAlign.center,
+                  keyboardType: TextInputType.text,
+                  textInputAction: TextInputAction.done,
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                  
+                  decoration: InputDecoration(
+                    
+                    border: InputBorder.none,
+                    hintText: 'dd/mm/yyyy',
+                    hintStyle: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            Container(
+              width: MediaQuery.of(context).size.width * 0.75,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  RaisedButton(
+                    onPressed: () {
+                      // TODO: save the edited data
+                      Navigator.pop(context);
+                    },
+                    child: Text('Save'),
+                  ),
+                  RaisedButton(
+                    onPressed: () {
+                      Navigator.pop(context, 'saveCancelled');
+                    },
+                    child: Text('Cancel'),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        
+      ),
     );
   }
 }
