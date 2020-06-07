@@ -45,11 +45,21 @@ class _MyHomePageState extends State<MyHomePage> {
   bool biggerToBuy = false;
   int selectedItemIndex = 0;
   int counter = 0;
+  final myController = TextEditingController(); // textfiel controller handles the data changes
 
   @override
   void initState() {
     super.initState();
   }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is removed from the
+    // widget tree.
+    myController.dispose();
+    super.dispose();
+  }
+
 
 
   //mocking data
@@ -445,8 +455,29 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
+class AddNewItemPage extends StatefulWidget {
 
-class AddNewItemPage extends StatelessWidget {
+  @override
+  _AddNewItemPageState createState() => _AddNewItemPageState();
+}
+
+class _AddNewItemPageState extends State<AddNewItemPage> {
+  final myControllerItemName = TextEditingController();
+  final myControllerItemDate = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Start listening to changes.
+    myControllerItemName.addListener(_printItemNameValue);
+    myControllerItemDate.addListener(_printItemNameValue);
+  }
+  void _printItemNameValue () {
+    //log(myControllerItemName.text + ':' + myControllerItemDate.text);
+  }
+  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -470,6 +501,7 @@ class AddNewItemPage extends StatelessWidget {
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.75,
                 child: TextField(
+                  controller: myControllerItemName,
                   textAlign: TextAlign.center,
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.done,
@@ -502,6 +534,7 @@ class AddNewItemPage extends StatelessWidget {
                 width: MediaQuery.of(context).size.width * 0.75,
                 alignment: Alignment.center,
                 child: TextField(
+                  controller: myControllerItemDate,
                   textAlign: TextAlign.center,
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.done,
@@ -510,7 +543,6 @@ class AddNewItemPage extends StatelessWidget {
                   ),
                   
                   decoration: InputDecoration(
-                    
                     border: InputBorder.none,
                     hintText: 'dd/mm/yyyy',
                     hintStyle: TextStyle(
@@ -530,6 +562,8 @@ class AddNewItemPage extends StatelessWidget {
                   RaisedButton(
                     onPressed: () {
                       // TODO: save the edited data
+                      log(myControllerItemName.text);
+                      log(myControllerItemDate.text);
                       Navigator.pop(context);
                     },
                     child: Text('Save'),
