@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
@@ -49,7 +50,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    getUserData('all');
+    getUserData('all').then((value) {
+      log("datas are loaded...");
+      print(listItemsAll);
+      log(listItemsAll[0].toString());
+      log(listItemsAll[1].toString());
+      log('end');
+      //print(listItemExpiry);
+    });
     super.initState();
   }
 
@@ -61,28 +69,8 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
-
-
-  //mocking data
-  List listItemExpiry = [
-    {'itemType' : 'expiry', 'itemName' : 'Yumurta', 'itemDate' : '14/08/2020'},
-    {'itemType' : 'expiry', 'itemName' : 'Süt', 'itemDate' : '23/10/2020'},
-    {'itemType' : 'expiry', 'itemName' : 'Peynir', 'itemDate' : '23/10/2020'},
-  ];
-  List listItemStock = [
-    {'itemType' : 'stock', 'itemName' : 'Nutella', 'itemDate' : '11/07/2020'},
-    {'itemType' : 'stock', 'itemName' : 'Ekmek', 'itemDate' : '11/07/2020'},
-  ];
-  List listItemTodo = [
-    {'itemType' : 'to-do', 'itemName' : 'Pirinç', 'itemDate' : '11/07/2020'},
-    {'itemType' : 'to-do', 'itemName' : 'Tuz', 'itemDate' : '11/07/2020'},
-  ];
-  List listItemToBuy = [
-    {'itemType' : 'to-buy', 'itemName' : 'Kekik', 'itemDate' : '11/07/2020'},
-    {'itemType' : 'to-buy', 'itemName' : 'Püskevit', 'itemDate' : '11/07/2020'},
-  ];
   List listItemsAll = [
-    {'itemType' : 'expiry', 'itemName' : 'Yumurta', 'itemDate' : '14/08/2020'},
+    /* {'itemType' : 'expiry', 'itemName' : 'Yumurta', 'itemDate' : '14/08/2020'},
     {'itemType' : 'expiry', 'itemName' : 'Süt', 'itemDate' : '23/10/2020'},
     {'itemType' : 'stock', 'itemName' : 'Nutella', 'itemDate' : '11/07/2020'},
     {'itemType' : 'stock', 'itemName' : 'Ekmek', 'itemDate' : '11/07/2020'},
@@ -90,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
     {'itemType' : 'to-do', 'itemName' : 'Tuz', 'itemDate' : '11/07/2020'},
     {'itemType' : 'to-buy', 'itemName' : 'Kekik', 'itemDate' : '11/07/2020'},
     {'itemType' : 'to-buy', 'itemName' : 'Püskevit', 'itemDate' : '11/07/2020'},
-    {'itemType' : 'expiry', 'itemName' : 'Peynir', 'itemDate' : '23/10/2020'},
+    {'itemType' : 'expiry', 'itemName' : 'Peynir', 'itemDate' : '23/10/2020'}, */
   ];
   List itemsExpiryList = [];
   List itemsStockList = [];
@@ -214,6 +202,7 @@ class _MyHomePageState extends State<MyHomePage> {
     else if ( dataChoice == 'stock') {
       // TODO: return stock data here for listbuilder widget
       listItemsAll = await items();
+      itemsStockList.clear();
       for(int x = 0; x<listItemsAll.length; x++)
       {
         if (listItemsAll[x].itemType == '2') {
@@ -259,7 +248,7 @@ class _MyHomePageState extends State<MyHomePage> {
     else if ( dataChoice == 'all') {
       // TODO: return all data here for listbuilder widget
       listItemsAll = await items();
-      print(listItemsAll);
+      //print(listItemsAll);
       return listItemsAll;
     }
     else {
@@ -336,7 +325,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     //log(listItemsAll.length.toString());
                     //getUserData('all');
                     //log(index.toString() + ': ' + listItems[index].toString());
-                    return new ItemWidget(itemType: listItemsAll[indexAll]['itemType'], itemName: listItemsAll[indexAll]['itemName'], itemDateTime: listItemsAll[indexAll]['itemDate'], itemCountdown: 9);
+                    return new ItemWidget(itemType: listItemsAll[indexAll].itemType, itemName: listItemsAll[indexAll].itemName, itemDateTime: listItemsAll[indexAll].itemDate, itemCountdown: 9);
                   }
                 ),
               ),
@@ -350,8 +339,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemBuilder: (BuildContext ctxt, int indexExpiry) {
                     //log(itemsExpiryList.length.toString());
                     //log(index.toString() + ': ' + listItems[index].toString());
-                    if (itemsExpiryList[indexExpiry]['itemType'] == '1'){
-                      return new ItemWidget(itemType: itemsExpiryList[indexExpiry]['itemType'], itemName: itemsExpiryList[indexExpiry]['itemName'], itemDateTime: itemsExpiryList[indexExpiry]['itemDate'], itemCountdown: 9);
+                    if (itemsExpiryList[indexExpiry].itemType == '1'){
+                      return new ItemWidget(itemType: itemsExpiryList[indexExpiry].itemType, itemName: itemsExpiryList[indexExpiry].itemName, itemDateTime: itemsExpiryList[indexExpiry].itemDate, itemCountdown: 9);
                     }
                     else {
                       return null;
@@ -364,12 +353,19 @@ class _MyHomePageState extends State<MyHomePage> {
             new Container(
               child: new Expanded(
                 child: new ListView.builder(
-                  itemCount: listItemStock.length,
+                  itemCount: itemsStockList.length,
                   padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
                   itemBuilder: (BuildContext ctxt, int indexStock) {
                     //log(index.toString() + ': ' + listItems[index].toString());
-                    if (listItemStock[indexStock]['itemType'] == 'stock'){
-                      return new ItemWidget(itemType: listItemStock[indexStock]['itemType'], itemName: listItemStock[indexStock]['itemName'], itemDateTime: listItemStock[indexStock]['itemDate'], itemCountdown: 9);
+                    if (itemsStockList.length > 0) {
+                      log('stock-length' + itemsStockList.length.toString());
+                      if (itemsStockList[indexStock].itemType == '2'){
+                        print(itemsStockList);
+                        return new ItemWidget(itemType: itemsStockList[indexStock].itemType, itemName: itemsStockList[indexStock].itemName, itemDateTime: itemsStockList[indexStock].itemDate, itemCountdown: 9);
+                      }
+                      else {
+                        return null;
+                      }
                     }
                     else {
                       return null;
@@ -382,12 +378,12 @@ class _MyHomePageState extends State<MyHomePage> {
             new Container(
               child: new Expanded(
                 child: new ListView.builder(
-                  itemCount: listItemTodo.length,
+                  itemCount: itemsToDoList.length,
                   padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
                   itemBuilder: (BuildContext ctxtToDo, int indexToDo) {
                     //log(index.toString() + ': ' + listItems[index].toString());
-                    if (listItemTodo[indexToDo]['itemType'] == 'to-do'){
-                      return new ItemWidget(itemType: listItemTodo[indexToDo]['itemType'], itemName: listItemTodo[indexToDo]['itemName'], itemDateTime: listItemTodo[indexToDo]['itemDate'], itemCountdown: 9);
+                    if (itemsToDoList[indexToDo].itemType == '3'){
+                      return new ItemWidget(itemType: itemsToDoList[indexToDo].itemType, itemName: itemsToDoList[indexToDo].itemName, itemDateTime: itemsToDoList[indexToDo].itemDate, itemCountdown: 9);
                     }
                     else {
                       return null;
@@ -400,12 +396,12 @@ class _MyHomePageState extends State<MyHomePage> {
             new Container(
               child: new Expanded(
                 child: new ListView.builder(
-                  itemCount: listItemToBuy.length,
+                  itemCount: itemsToBuyList.length,
                   padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
                   itemBuilder: (BuildContext ctxt, int indexToBuy) {
                     //log(index.toString() + ': ' + listItems[index].toString());
-                    if (listItemToBuy[indexToBuy]['itemType'] == 'to-buy'){
-                      return new ItemWidget(itemType: listItemToBuy[indexToBuy]['itemType'], itemName: listItemToBuy[indexToBuy]['itemName'], itemDateTime: listItemToBuy[indexToBuy]['itemDate'], itemCountdown: 9);
+                    if (itemsToBuyList[indexToBuy].itemType == '4'){
+                      return new ItemWidget(itemType: itemsToBuyList[indexToBuy].itemType, itemName: itemsToBuyList[indexToBuy].itemName, itemDateTime: itemsToBuyList[indexToBuy].itemDate, itemCountdown: 9);
                     }
                     else {
                       return null;
