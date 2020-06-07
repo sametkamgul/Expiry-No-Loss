@@ -49,6 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+    getUserData('all');
     super.initState();
   }
 
@@ -91,6 +92,10 @@ class _MyHomePageState extends State<MyHomePage> {
     {'itemType' : 'to-buy', 'itemName' : 'Püskevit', 'itemDate' : '11/07/2020'},
     {'itemType' : 'expiry', 'itemName' : 'Peynir', 'itemDate' : '23/10/2020'},
   ];
+  List itemsExpiryList = [];
+  List itemsStockList = [];
+  List itemsToDoList = [];
+  List itemsToBuyList = [];
   
   _MyHomePageState();
 
@@ -189,30 +194,76 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Future<dynamic> getUserData (String dataChoice) {
-    dynamic mockData;
+  Future<dynamic> getUserData (String dataChoice) async {
+    
     if (dataChoice == 'expiry') {
       // TODO: return expiry data here for listbuilder widget
-      return mockData;
+      listItemsAll = await items();
+      for(int x = 0; x<listItemsAll.length; x++)
+      {
+        if (listItemsAll[x].itemType == '1') {
+          itemsExpiryList.add(listItemsAll[x]);
+        }
+        else {
+          // don't add the value
+        }
+      }
+      print(itemsExpiryList);
+      return itemsExpiryList;
     }
     else if ( dataChoice == 'stock') {
       // TODO: return stock data here for listbuilder widget
-      return mockData;
+      listItemsAll = await items();
+      for(int x = 0; x<listItemsAll.length; x++)
+      {
+        if (listItemsAll[x].itemType == '2') {
+          itemsStockList.add(listItemsAll[x]);
+        }
+        else {
+          // don't add the value
+        }
+      }
+      print(itemsStockList);
+      return itemsStockList;
     }
     else if ( dataChoice == 'to-do') {
       // TODO: return to-do data here for listbuilder widget
-      return mockData;
+      listItemsAll = await items();
+      for(int x = 0; x<listItemsAll.length; x++)
+      {
+        if (listItemsAll[x].itemType == '3') {
+          itemsToDoList.add(listItemsAll[x]);
+        }
+        else {
+          // don't add the value
+        }
+      }
+      print(itemsToDoList);
+      return itemsToDoList;
     }
     else if ( dataChoice == 'to-buy') {
       // TODO: return to-buy data here for listbuilder widget
-      return mockData;
+      listItemsAll = await items();
+      for(int x = 0; x<listItemsAll.length; x++)
+      {
+        if (listItemsAll[x].itemType == '4') {
+          itemsToBuyList.add(listItemsAll[x]);
+        }
+        else {
+          // don't add the value
+        }
+      }
+      print(itemsToBuyList);
+      return itemsToBuyList;
     }
     else if ( dataChoice == 'all') {
       // TODO: return all data here for listbuilder widget
-      return mockData;
+      listItemsAll = await items();
+      print(listItemsAll);
+      return listItemsAll;
     }
     else {
-      return mockData;
+      return await items();
     }    
   }
 /* 
@@ -229,6 +280,26 @@ class _MyHomePageState extends State<MyHomePage> {
     
     setState(() {
       _selectedItemIndex = this.selectedItemIndex;
+      if (selectedItemIndex == 1) {
+        log("expiry data");
+        getUserData('expiry');
+      }
+      else if (selectedItemIndex == 2) {
+        log("stock data");
+        getUserData('stock');
+      }
+      else if (selectedItemIndex == 3) {
+        log("to-do data");
+        getUserData('to-do');
+      }
+      else if (selectedItemIndex == 4) {
+        log("to-buy data");
+        getUserData('to-buy');
+      }
+      else if (selectedItemIndex == 0) {
+        log("all data");
+        getUserData('all');
+      }
     });
     // full screen width and height
     //double screenWidth = MediaQuery.of(context).size.width;
@@ -262,8 +333,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemCount: listItemsAll.length,
                   padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
                   itemBuilder: (BuildContext ctxt, int indexAll) {
-                    log(listItemsAll.length.toString());
-                    getUserData('all');
+                    //log(listItemsAll.length.toString());
+                    //getUserData('all');
                     //log(index.toString() + ': ' + listItems[index].toString());
                     return new ItemWidget(itemType: listItemsAll[indexAll]['itemType'], itemName: listItemsAll[indexAll]['itemName'], itemDateTime: listItemsAll[indexAll]['itemDate'], itemCountdown: 9);
                   }
@@ -274,13 +345,13 @@ class _MyHomePageState extends State<MyHomePage> {
             new Container(
               child: new Expanded(
                 child: new ListView.builder(
-                  itemCount: listItemExpiry.length,
+                  itemCount: itemsExpiryList.length,
                   padding: EdgeInsets.only(top: 20.0, bottom: 20.0),
                   itemBuilder: (BuildContext ctxt, int indexExpiry) {
-                    log(listItemExpiry.length.toString());
+                    //log(itemsExpiryList.length.toString());
                     //log(index.toString() + ': ' + listItems[index].toString());
-                    if (listItemExpiry[indexExpiry]['itemType'] == 'expiry'){
-                      return new ItemWidget(itemType: listItemExpiry[indexExpiry]['itemType'], itemName: listItemExpiry[indexExpiry]['itemName'], itemDateTime: listItemExpiry[indexExpiry]['itemDate'], itemCountdown: 9);
+                    if (itemsExpiryList[indexExpiry]['itemType'] == '1'){
+                      return new ItemWidget(itemType: itemsExpiryList[indexExpiry]['itemType'], itemName: itemsExpiryList[indexExpiry]['itemName'], itemDateTime: itemsExpiryList[indexExpiry]['itemDate'], itemCountdown: 9);
                     }
                     else {
                       return null;
@@ -391,7 +462,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 //await deleteDog(fido.id);
 
                 // Print the list of dogs (empty).
-                print(await items());
+                //print(await items());
+
+                //print(await items());
 
                 Navigator.push(
                   context,
