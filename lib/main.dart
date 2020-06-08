@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
@@ -6,6 +5,7 @@ import 'package:sqflite/sqflite.dart';
 import 'widgets/item.dart';
 import 'widgets/bottomTab.dart';
 import 'components/dbhelper.dart';
+import 'components/constants.dart';
 
 void main() {
     runApp(MyApp());
@@ -29,10 +29,12 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.data, this.title}) : super(key: key);
+  MyHomePage({Key key, this.data, this.title, this.notify}) : super(key: key);
 
   final String title;
   final String data;
+  final Function() notify;
+  
   //final int selectedItemIndex;
 
   @override
@@ -47,16 +49,12 @@ class _MyHomePageState extends State<MyHomePage> {
   int selectedItemIndex = 0;
   int counter = 0;
   final myController = TextEditingController(); // textfiel controller handles the data changes
+  Constants constants = new Constants();
 
   @override
   void initState() {
-    getUserData('all').then((value) {
-      log("datas are loaded...");
-      print(listItemsAll);
-      log(listItemsAll[0].toString());
-      log(listItemsAll[1].toString());
-      log('end');
-      //print(listItemExpiry);
+    getUserData('all').then((_) {
+      refresh(); // refreshing the page at the beginning
     });
     super.initState();
   }
@@ -69,23 +67,14 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
-  List listItemsAll = [
-    /* {'itemType' : 'expiry', 'itemName' : 'Yumurta', 'itemDate' : '14/08/2020'},
-    {'itemType' : 'expiry', 'itemName' : 'Süt', 'itemDate' : '23/10/2020'},
-    {'itemType' : 'stock', 'itemName' : 'Nutella', 'itemDate' : '11/07/2020'},
-    {'itemType' : 'stock', 'itemName' : 'Ekmek', 'itemDate' : '11/07/2020'},
-    {'itemType' : 'to-do', 'itemName' : 'Pirinç', 'itemDate' : '11/07/2020'},
-    {'itemType' : 'to-do', 'itemName' : 'Tuz', 'itemDate' : '11/07/2020'},
-    {'itemType' : 'to-buy', 'itemName' : 'Kekik', 'itemDate' : '11/07/2020'},
-    {'itemType' : 'to-buy', 'itemName' : 'Püskevit', 'itemDate' : '11/07/2020'},
-    {'itemType' : 'expiry', 'itemName' : 'Peynir', 'itemDate' : '23/10/2020'}, */
-  ];
+  List listItemsAll = [];
   List itemsExpiryList = [];
   List itemsStockList = [];
   List itemsToDoList = [];
   List itemsToBuyList = [];
   
   _MyHomePageState();
+
 
   Future<void> removeDatabase() async {
     log('database is deleted.');
@@ -108,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // When the database is first created, create a table to store dogs.
       onCreate: (db, version) {
         return db.execute(
-          "CREATE TABLE items(id INTEGER PRIMARY KEY, itemType TEXT, itemName TEXT, itemDate TEXT, itemAmount INTEGER)",
+          "CREATE TABLE items(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, itemType TEXT, itemName TEXT, itemDate TEXT, itemAmount INTEGER)",
         );
       },
       // Set the version. This executes the onCreate function and provides a
@@ -185,8 +174,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<dynamic> getUserData (String dataChoice) async {
     
     if (dataChoice == 'expiry') {
-      // TODO: return expiry data here for listbuilder widget
       listItemsAll = await items();
+      itemsExpiryList.clear();
       for(int x = 0; x<listItemsAll.length; x++)
       {
         if (listItemsAll[x].itemType == '1') {
@@ -196,11 +185,10 @@ class _MyHomePageState extends State<MyHomePage> {
           // don't add the value
         }
       }
-      print(itemsExpiryList);
+      //print(itemsExpiryList);
       return itemsExpiryList;
     }
     else if ( dataChoice == 'stock') {
-      // TODO: return stock data here for listbuilder widget
       listItemsAll = await items();
       itemsStockList.clear();
       for(int x = 0; x<listItemsAll.length; x++)
@@ -212,12 +200,12 @@ class _MyHomePageState extends State<MyHomePage> {
           // don't add the value
         }
       }
-      print(itemsStockList);
+      //print(itemsStockList);
       return itemsStockList;
     }
     else if ( dataChoice == 'to-do') {
-      // TODO: return to-do data here for listbuilder widget
       listItemsAll = await items();
+      itemsToDoList.clear();
       for(int x = 0; x<listItemsAll.length; x++)
       {
         if (listItemsAll[x].itemType == '3') {
@@ -227,12 +215,12 @@ class _MyHomePageState extends State<MyHomePage> {
           // don't add the value
         }
       }
-      print(itemsToDoList);
+      //print(itemsToDoList);
       return itemsToDoList;
     }
     else if ( dataChoice == 'to-buy') {
-      // TODO: return to-buy data here for listbuilder widget
       listItemsAll = await items();
+      itemsToBuyList.clear();
       for(int x = 0; x<listItemsAll.length; x++)
       {
         if (listItemsAll[x].itemType == '4') {
@@ -242,52 +230,55 @@ class _MyHomePageState extends State<MyHomePage> {
           // don't add the value
         }
       }
-      print(itemsToBuyList);
+      //print(itemsToBuyList);
       return itemsToBuyList;
     }
     else if ( dataChoice == 'all') {
-      // TODO: return all data here for listbuilder widget
       listItemsAll = await items();
-      //print(listItemsAll);
+      print(listItemsAll);
       return listItemsAll;
     }
     else {
       return await items();
     }    
   }
-/* 
-  var fido = Item(
-    id: 0,
-    itemName: 'Fido',
-    itemDate: '23/03/2021',
-  ); */
 
+  void refresh() {
+    setState(() {
+      //
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    int _selectedItemIndex;
+    int _selectedItemIndex = 0;
     
     setState(() {
       _selectedItemIndex = this.selectedItemIndex;
       if (selectedItemIndex == 1) {
-        log("expiry data");
-        getUserData('expiry');
+        getUserData('expiry').then((value) {
+          this.refresh();
+        });
       }
       else if (selectedItemIndex == 2) {
-        log("stock data");
-        getUserData('stock');
+        getUserData('stock').then((value) {
+          this.refresh();
+        });
       }
       else if (selectedItemIndex == 3) {
-        log("to-do data");
-        getUserData('to-do');
+        getUserData('to-do').then((value) {
+          this.refresh();
+        });
       }
       else if (selectedItemIndex == 4) {
-        log("to-buy data");
-        getUserData('to-buy');
+        getUserData('to-buy').then((value) {
+          this.refresh();
+        });
       }
       else if (selectedItemIndex == 0) {
-        log("all data");
-        getUserData('all');
+        getUserData('all').then((value) {
+          this.refresh();
+        });
       }
     });
     // full screen width and height
@@ -296,11 +287,9 @@ class _MyHomePageState extends State<MyHomePage> {
     /* setState(() {
       selectedItemIndex = widget.selectedItemIndex;
     }); */
-
-    log('loaded:' + _selectedItemIndex.toString());
   
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Color(constants.colorPageBackground),
       appBar: AppBar(
         backgroundColor: Colors.indigoAccent,
         // Here we take the value from the MyHomePage object that was created by
@@ -325,12 +314,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     //log(listItemsAll.length.toString());
                     //getUserData('all');
                     //log(index.toString() + ': ' + listItems[index].toString());
-                    return new ItemWidget(itemType: listItemsAll[indexAll].itemType, itemName: listItemsAll[indexAll].itemName, itemDateTime: listItemsAll[indexAll].itemDate, itemCountdown: 9);
+                    return ItemWidget(itemType: listItemsAll[indexAll].itemType, itemName: listItemsAll[indexAll].itemName, itemDateTime: listItemsAll[indexAll].itemDate, itemCountdown: 9);
                   }
                 ),
               ),
             ),
-            if(_selectedItemIndex == 1)
+            if (_selectedItemIndex == 1)
             new Container(
               child: new Expanded(
                 child: new ListView.builder(
@@ -340,7 +329,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     //log(itemsExpiryList.length.toString());
                     //log(index.toString() + ': ' + listItems[index].toString());
                     if (itemsExpiryList[indexExpiry].itemType == '1'){
-                      return new ItemWidget(itemType: itemsExpiryList[indexExpiry].itemType, itemName: itemsExpiryList[indexExpiry].itemName, itemDateTime: itemsExpiryList[indexExpiry].itemDate, itemCountdown: 9);
+                      return ItemWidget(itemType: itemsExpiryList[indexExpiry].itemType, itemName: itemsExpiryList[indexExpiry].itemName, itemDateTime: itemsExpiryList[indexExpiry].itemDate, itemCountdown: 9);
                     }
                     else {
                       return null;
@@ -358,10 +347,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemBuilder: (BuildContext ctxt, int indexStock) {
                     //log(index.toString() + ': ' + listItems[index].toString());
                     if (itemsStockList.length > 0) {
-                      log('stock-length' + itemsStockList.length.toString());
                       if (itemsStockList[indexStock].itemType == '2'){
-                        print(itemsStockList);
-                        return new ItemWidget(itemType: itemsStockList[indexStock].itemType, itemName: itemsStockList[indexStock].itemName, itemDateTime: itemsStockList[indexStock].itemDate, itemCountdown: 9);
+                        //print(itemsStockList);
+                        return ItemWidget(itemType: itemsStockList[indexStock].itemType, itemName: itemsStockList[indexStock].itemName, itemDateTime: itemsStockList[indexStock].itemDate, itemCountdown: 9);
                       }
                       else {
                         return null;
@@ -383,7 +371,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemBuilder: (BuildContext ctxtToDo, int indexToDo) {
                     //log(index.toString() + ': ' + listItems[index].toString());
                     if (itemsToDoList[indexToDo].itemType == '3'){
-                      return new ItemWidget(itemType: itemsToDoList[indexToDo].itemType, itemName: itemsToDoList[indexToDo].itemName, itemDateTime: itemsToDoList[indexToDo].itemDate, itemCountdown: 9);
+                      return ItemWidget(itemType: itemsToDoList[indexToDo].itemType, itemName: itemsToDoList[indexToDo].itemName, itemDateTime: itemsToDoList[indexToDo].itemDate, itemCountdown: 9);
                     }
                     else {
                       return null;
@@ -401,7 +389,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemBuilder: (BuildContext ctxt, int indexToBuy) {
                     //log(index.toString() + ': ' + listItems[index].toString());
                     if (itemsToBuyList[indexToBuy].itemType == '4'){
-                      return new ItemWidget(itemType: itemsToBuyList[indexToBuy].itemType, itemName: itemsToBuyList[indexToBuy].itemName, itemDateTime: itemsToBuyList[indexToBuy].itemDate, itemCountdown: 9);
+                      return ItemWidget(itemType: itemsToBuyList[indexToBuy].itemType, itemName: itemsToBuyList[indexToBuy].itemName, itemDateTime: itemsToBuyList[indexToBuy].itemDate, itemCountdown: 9);
                     }
                     else {
                       return null;
@@ -416,7 +404,9 @@ class _MyHomePageState extends State<MyHomePage> {
             // plus-sign add-button
             GestureDetector(
               onLongPress: () {
-                removeDatabase();
+                setState(() {
+                  removeDatabase();
+                });
               },
               onTap: () async {
                 log('tapped plus: adding new value');
@@ -444,7 +434,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemAmount: 11,
                 );
                 await insertItem(fido); */
-                var fido = Item(
+                /* var fido = Item(
                   id: counter,
                   itemType: selectedItemIndex.toString(),
                   itemName: 'Ekmek',
@@ -452,7 +442,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemAmount: 32
                 );
                 counter++;
-                await insertItem(fido);
+                await insertItem(fido); */
 
                 // Delete Fido from the database.
                 //await deleteDog(fido.id);
@@ -464,7 +454,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AddNewItemPage()),
+                  MaterialPageRoute(builder: (context) => AddNewItemPage(selectedItemIndex: selectedItemIndex)),
                 );
               },
               child: AnimatedContainer(
@@ -513,7 +503,7 @@ class _MyHomePageState extends State<MyHomePage> {
               tab1: 'expiry', tab2: 'stock', tab3: 'to-do', tab4: 'to-buy',
               onSelectedItemIndexChange: (int val) => setState((){
                 selectedItemIndex = val;
-                log('testttt:' + selectedItemIndex.toString());
+                log('selected_index:' + selectedItemIndex.toString());
               }),
             ),
           ],
@@ -525,6 +515,8 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class AddNewItemPage extends StatefulWidget {
+  AddNewItemPage({Key key, @required this.selectedItemIndex}) : super(key: key);
+  final selectedItemIndex;
 
   @override
   _AddNewItemPageState createState() => _AddNewItemPageState();
@@ -542,8 +534,49 @@ class _AddNewItemPageState extends State<AddNewItemPage> {
     myControllerItemName.addListener(_printItemNameValue);
     myControllerItemDate.addListener(_printItemNameValue);
   }
-  void _printItemNameValue () {
+
+  void _printItemNameValue () async {
     //log(myControllerItemName.text + ':' + myControllerItemDate.text);
+  }
+
+  refresh() {
+    setState(() {});
+    log('parent refreshing');
+  }
+
+  Future<dynamic> createDatabase() async {
+    final database = openDatabase(
+      // Set the path to the database. Note: Using the `join` function from the
+      // `path` package is best practice to ensure the path is correctly
+      // constructed for each platform.
+      
+      join(await getDatabasesPath(), 'items.db'),
+      
+      // When the database is first created, create a table to store dogs.
+      onCreate: (db, version) {
+        return db.execute(
+          "CREATE TABLE items(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, itemType TEXT, itemName TEXT, itemDate TEXT, itemAmount INTEGER)",
+        );
+      },
+      // Set the version. This executes the onCreate function and provides a
+      // path to perform database upgrades and downgrades.
+      version: 1,
+    );
+    return database;
+  }
+
+  Future<void> insertItem(Item item) async {
+    // Get a reference to the database.
+    final Database db = await createDatabase();
+
+    // Insert the Dog into the correct table. Also specify the
+    // `conflictAlgorithm`. In this case, if the same dog is inserted
+    // multiple times, it replaces the previous data.
+    await db.insert(
+      'items',
+      item.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
   
 
@@ -629,11 +662,25 @@ class _AddNewItemPageState extends State<AddNewItemPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   RaisedButton(
-                    onPressed: () {
-                      // TODO: save the edited data
+                    onPressed: () async {
                       log(myControllerItemName.text);
                       log(myControllerItemDate.text);
+                      var fido = Item(
+                        itemType: widget.selectedItemIndex.toString(),
+                        itemName: myControllerItemName.text,
+                        itemDate: myControllerItemDate.text,
+                        itemAmount: 32
+                      );
+                      await insertItem(fido);
+                      log('item is added');
+                      log('selected: ' + widget.selectedItemIndex.toString());
                       Navigator.pop(context);
+                      /* Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MyHomePage(notify: refresh,),
+                        ),  
+                      ); */
                     },
                     child: Text('Save'),
                   ),

@@ -1,8 +1,7 @@
 import 'dart:developer';
-
-import 'package:expiry_no_loss/components/dbhelper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:expiry_no_loss/components/constants.dart';
 
 class ItemWidget extends StatefulWidget {
   final String itemType;
@@ -29,6 +28,7 @@ class _ItemWidgetState extends State<ItemWidget> {
   bool isEditingContent = false;
   bool isCancelled = false;
   int selectedItemIndex = 0;
+  Constants constants = new Constants();
 
   @override
   Widget build(BuildContext context) {
@@ -37,22 +37,22 @@ class _ItemWidgetState extends State<ItemWidget> {
       child: GestureDetector(
         onTap: () {
           log('tap:       ' + widget.itemType + ', ' + widget.itemName + ', ' + widget.itemDateTime + ', ' + widget.itemCountdown.toString());
-          if (widget.itemType == 'expiry') {
+          if (widget.itemType == '1') {
             setState(() {
               this.selectedItemIndex = 1;
             });
           }
-          else if (widget.itemType == 'stock') {
+          else if (widget.itemType == '2') {
             setState(() {
               this.selectedItemIndex = 2;
             });
           }
-          else if (widget.itemType == 'to-do') {
+          else if (widget.itemType == '3') {
             setState(() {
               this.selectedItemIndex = 3;
             });
           }
-          else if (widget.itemType == 'to-buy') {
+          else if (widget.itemType == '4') {
             setState(() {
               this.selectedItemIndex = 4;
             });
@@ -82,13 +82,13 @@ class _ItemWidgetState extends State<ItemWidget> {
   Widget itemNormal() {
     return new Container(
       decoration: new BoxDecoration(
-        color: widget.itemType == 'expiry' ? Color(0xFFC88264)
-              : widget.itemType == 'stock' ? Color(0xFF6B75E3)
-              : widget.itemType == 'to-do' ? Color(0xFF7BB076)
-              : widget.itemType == 'to-buy' ? Color(0xFFD86579)
+        color: widget.itemType == '1' ? Color(constants.colorExpiry)
+              : widget.itemType == '2' ? Color(constants.colorStock)
+              : widget.itemType == '3' ? Color(constants.colorToDo)
+              : widget.itemType == '4' ? Color(constants.colorToBuy)
               : Colors.blue,
         border: Border.all(
-          width: 3,
+          width: 0,
           color: Colors.white   // TODO: maybe remove the stroke color!!!
         ),
         borderRadius: new BorderRadius.all(
@@ -295,7 +295,6 @@ class SecondRoute extends StatelessWidget {
                 children: <Widget>[
                   RaisedButton(
                     onPressed: () {
-                      // TODO: save the edited data
                       Navigator.pop(context);
                     },
                     child: Text('Save'),

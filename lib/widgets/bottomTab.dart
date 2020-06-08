@@ -1,6 +1,6 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:expiry_no_loss/components/constants.dart';
 
 class BottomTab extends StatefulWidget {
   final String tab1;
@@ -26,6 +26,7 @@ class _BottomTabState extends State<BottomTab> {
   bool biggerStock = false;
   bool biggerToBuy = false;
   bool biggerToDo = false;
+  Constants constants = new Constants();
 
   @override
   Widget build(BuildContext context) {
@@ -62,17 +63,12 @@ class _BottomTabState extends State<BottomTab> {
                     this.biggerToDo = false;
                     this.biggerToBuy = false;
                   });
-                  log(this.biggerExpiry.toString());
-                  log(this.biggerStock.toString());
-                  log(this.biggerToDo.toString());
-                  log(this.biggerToBuy.toString());
-                  log(widget.tab1);
-                
+                  log('tab: ' + widget.tab1);
                 },
                 child: new Container(
                   width: 4.0 * screenWidth / 4.0,
                   decoration: new BoxDecoration(
-                    color: Color(0xFFC88264),
+                    color: Color(constants.colorExpiry),
                     borderRadius: new BorderRadius.only(
                       topLeft: Radius.circular(40.0),
                     )
@@ -128,12 +124,12 @@ class _BottomTabState extends State<BottomTab> {
                     this.biggerToDo = false;
                     this.biggerToBuy = false;
                   });
-                  
+                  log('tab: ' + widget.tab2);
                 },
                 child: new Container(
                   width: screenWidth / 4.0,
                   decoration: new BoxDecoration(
-                    color: Color(0xFF6B75E3),
+                    color: Color(constants.colorStock),
                     borderRadius: new BorderRadius.only(
                       topLeft: const Radius.circular(40.0),
                     )
@@ -189,16 +185,12 @@ class _BottomTabState extends State<BottomTab> {
                     this.biggerStock = false;
                     this.biggerToBuy = false;
                   });
-                  log(this.biggerExpiry.toString());
-                  log(this.biggerStock.toString());
-                  log(this.biggerToDo.toString());
-                  log(this.biggerToBuy.toString());
                   log('tab: ' + widget.tab3);
                 },
                 child: new Container(
                   width: screenWidth / 4.0,
                   decoration: new BoxDecoration(
-                    color: Color(0xFF7BB076),
+                    color: Color(constants.colorToDo),
                     borderRadius: new BorderRadius.only(
                       topLeft: const Radius.circular(40.0),
                     )
@@ -254,16 +246,12 @@ class _BottomTabState extends State<BottomTab> {
                     this.biggerStock = false;
                     this.biggerToDo = false;
                   });
-                  log(this.biggerExpiry.toString());
-                  log(this.biggerStock.toString());
-                  log(this.biggerToDo.toString());
-                  log(this.biggerToBuy.toString());
-                  log(widget.tab4);
+                  log('tab: ' + widget.tab4);
                 },
                 child: new Container(
                   width: screenWidth / 4.0,
                   decoration: new BoxDecoration(
-                    color: Color(0xFFD86579),
+                    color: Color(constants.colorToBuy),
                     borderRadius: new BorderRadius.only(
                       topLeft: const Radius.circular(40.0),
                     )
