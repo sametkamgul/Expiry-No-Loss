@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Expiry: No Loss'),
+      home: MyHomePage(title: 'Expire: No More'),
     );
   }
 }
@@ -108,8 +108,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     return database;
   }
-  
-  
 
   Future<void> insertItem(Item item) async {
     // Get a reference to the database.
@@ -237,7 +235,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     else if ( dataChoice == 'all') {
       listItemsAll = await items();
-      print(listItemsAll);
+      //print(listItemsAll);
       return listItemsAll;
     }
     else {
@@ -366,11 +364,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     //log(index.toString() + ': ' + listItems[index].toString());
                     if (itemsExpiryList[indexExpiry].itemType == '1'){
                       return ItemWidget(
-                        daysLeftOrPassed: getItemCountDownStatus(listItemsAll[indexExpiry].itemDate),
+                        daysLeftOrPassed: getItemCountDownStatus(itemsExpiryList[indexExpiry].itemDate),
                         itemType: itemsExpiryList[indexExpiry].itemType,
                         itemName: itemsExpiryList[indexExpiry].itemName,
                         itemDate: itemsExpiryList[indexExpiry].itemDate,
-                        itemCountdown: getItemCountdown(listItemsAll[indexExpiry].itemDate)
+                        itemCountdown: getItemCountdown(itemsExpiryList[indexExpiry].itemDate)
                       );
                     }
                     else {
@@ -392,11 +390,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       if (itemsStockList[indexStock].itemType == '2'){
                         //print(itemsStockList);
                         return ItemWidget(
-                          daysLeftOrPassed: getItemCountDownStatus(listItemsAll[indexStock].itemDate),
+                          daysLeftOrPassed: getItemCountDownStatus(itemsStockList[indexStock].itemDate),
                           itemType: itemsStockList[indexStock].itemType,
                           itemName: itemsStockList[indexStock].itemName,
                           itemDate: itemsStockList[indexStock].itemDate,
-                          itemCountdown: getItemCountdown(listItemsAll[indexStock].itemDate)
+                          itemCountdown: getItemCountdown(itemsStockList[indexStock].itemDate)
                         );
                       }
                       else {
@@ -420,11 +418,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     //log(index.toString() + ': ' + listItems[index].toString());
                     if (itemsToDoList[indexToDo].itemType == '3'){
                       return ItemWidget(
-                        daysLeftOrPassed: getItemCountDownStatus(listItemsAll[indexToDo].itemDate),
+                        daysLeftOrPassed: getItemCountDownStatus(itemsToDoList[indexToDo].itemDate),
                         itemType: itemsToDoList[indexToDo].itemType,
                         itemName: itemsToDoList[indexToDo].itemName,
                         itemDate: itemsToDoList[indexToDo].itemDate,
-                        itemCountdown: getItemCountdown(listItemsAll[indexToDo].itemDate)
+                        itemCountdown: getItemCountdown(itemsToDoList[indexToDo].itemDate)
                       );
                     }
                     else {
@@ -444,11 +442,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     //log(index.toString() + ': ' + listItems[index].toString());
                     if (itemsToBuyList[indexToBuy].itemType == '4'){
                       return ItemWidget(
-                        daysLeftOrPassed: getItemCountDownStatus(listItemsAll[indexToBuy].itemDate),
+                        daysLeftOrPassed: getItemCountDownStatus(itemsToBuyList[indexToBuy].itemDate),
                         itemType: itemsToBuyList[indexToBuy].itemType,
                         itemName: itemsToBuyList[indexToBuy].itemName,
                         itemDate: itemsToBuyList[indexToBuy].itemDate,
-                        itemCountdown: getItemCountdown(listItemsAll[indexToBuy].itemDate)
+                        itemCountdown: getItemCountdown(itemsToBuyList[indexToBuy].itemDate)
                       );
                     }
                     else {
@@ -760,7 +758,7 @@ class _AddNewItemPageState extends State<AddNewItemPage> {
                           color: Colors.white,
                           fontSize: 18.0,
                         ),
-                        ),
+                      ),
                     ),
                   ),
                   Container(

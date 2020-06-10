@@ -22,3 +22,4 @@ samples, guidance on mobile development, and a full API reference.
 
 ### TODOs
 - bottom menu has a solid background color. It must be fixed as a transparent. UI problem.
+- item long press functionality: edit, delete UI fix.

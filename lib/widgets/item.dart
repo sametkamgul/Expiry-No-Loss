@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:expiry_no_loss/components/constants.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart' as Path;
 import 'package:sqflite/sqflite.dart';
 
@@ -11,6 +12,7 @@ class ItemWidget extends StatefulWidget {
   final String itemDate;
   final int itemCountdown;
   final String daysLeftOrPassed;
+  final bool isEditing;
 
   ItemWidget(
     {
@@ -20,6 +22,7 @@ class ItemWidget extends StatefulWidget {
       @required this.itemDate,
       @required this.itemCountdown,
       @required this.daysLeftOrPassed,
+      this.isEditing,
     }
   ): super(key: key);
     @override
@@ -198,12 +201,15 @@ class _ItemWidgetState extends State<ItemWidget> {
               width: 100.0,
               child: GestureDetector(
                 onTap: () {
-                  log('editing content');
+                  log('pressed edit button');
                   setState(() {
                     isEditingContent = true;
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SecondRoute()),
+                      MaterialPageRoute(builder: (context) => ItemActionPage(
+                        itemName: widget.itemName,
+                        itemDate: widget.itemDate,
+                      )),
                     );
                   });
                 },
@@ -240,7 +246,7 @@ class _ItemWidgetState extends State<ItemWidget> {
               width: 100.0,
               child: GestureDetector(
                 onTap: () {
-                  log('cancelled');
+                  log('cancelled editing');
                   setState(() {
                     isEditing = false;
                   });
@@ -261,9 +267,32 @@ class _ItemWidgetState extends State<ItemWidget> {
   }
 }
 
-class SecondRoute extends StatelessWidget {
+class ItemActionPage extends StatefulWidget {
+  ItemActionPage({Key key, this.itemName, this.itemDate}) : super(key: key);
+  final String itemName;
+  final String itemDate;
+
+  @override
+  _ItemActionPageState createState() => _ItemActionPageState();
+}
+
+class _ItemActionPageState extends State<ItemActionPage> {
+  String editedLabelText = '';
+  String _editedLabelText;
+
+  void initState() {
+    super.initState();
+    editedLabelText = widget.itemDate;
+  }
+
   @override
   Widget build(BuildContext context) {
+    log(widget.itemDate);
+    
+    setState(() {
+      _editedLabelText = editedLabelText;
+    });
+    // assigning the date value of the item
     return Scaffold(
       /* appBar: AppBar(
         title: Text("Second Route"),
@@ -293,7 +322,7 @@ class SecondRoute extends StatelessWidget {
                   ),
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: 'item name',
+                    hintText: widget.itemName,
                     hintStyle: TextStyle(
                       color: Colors.white,
                     ),
@@ -316,20 +345,25 @@ class SecondRoute extends StatelessWidget {
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.75,
                 alignment: Alignment.center,
-                child: TextField(
-                  textAlign: TextAlign.center,
-                  keyboardType: TextInputType.text,
-                  textInputAction: TextInputAction.done,
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                  
-                  decoration: InputDecoration(
-                    
-                    border: InputBorder.none,
-                    hintText: 'select a date',
-                    hintStyle: TextStyle(
+                child: FlatButton(
+                  onPressed: () {
+                    showDatePicker(
+                      context: context,
+                      initialDate: DateFormat('dd/MM/yyyy').parse(widget.itemDate),
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime(2030)
+                    ).then((value){
+                      log(value.toString());
+                      setState(() {
+                        editedLabelText = DateFormat('dd/MM/yyyy').format(value);
+                      });
+                    });
+                  },
+                  child: Text(
+                    _editedLabelText,
+                    style: TextStyle(
                       color: Colors.white,
+                      fontSize: 20.0,
                     ),
                   ),
                 ),
@@ -337,29 +371,58 @@ class SecondRoute extends StatelessWidget {
             ),
 
             Container(
+              padding: EdgeInsets.only(top: 5.0),
               width: MediaQuery.of(context).size.width * 0.75,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  RaisedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text('Save'),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xFFC88264),
+                      borderRadius: new BorderRadius.all(
+                        Radius.circular(40.0),
+                      )
+                    ),
+                    child: FlatButton(
+                      onPressed: () {
+                        //TODO: save the edited information here!!!
+                        Navigator.pop(context, 'saveDone');
+                      },
+                      child: Text(
+                        'Save',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.0,
+                        ),
+                      ),
+                    ),
                   ),
-                  RaisedButton(
-                    onPressed: () {
-                      Navigator.pop(context, 'saveCancelled');
-                    },
-                    child: Text('Cancel'),
-                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xFFC88264),
+                      borderRadius: new BorderRadius.all(
+                        Radius.circular(40.0),
+                      )
+                    ),
+                    child: FlatButton(
+                      onPressed: () {
+                        Navigator.pop(context, 'saveCancelled');
+                      },
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.0,
+                        ),  
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),
           ],
         ),
-        
       ),
     );
   }
