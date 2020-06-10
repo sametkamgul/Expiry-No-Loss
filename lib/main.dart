@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'widgets/item.dart';
@@ -451,7 +452,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 //print(await items());
 
                 //print(await items());
-
+                
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => AddNewItemPage(selectedItemIndex: selectedItemIndex)),
@@ -524,7 +525,7 @@ class AddNewItemPage extends StatefulWidget {
 
 class _AddNewItemPageState extends State<AddNewItemPage> {
   final myControllerItemName = TextEditingController();
-  final myControllerItemDate = TextEditingController();
+  String dateButtonText = 'Set Expiry Date';
 
   @override
   void initState() {
@@ -532,7 +533,6 @@ class _AddNewItemPageState extends State<AddNewItemPage> {
 
     // Start listening to changes.
     myControllerItemName.addListener(_printItemNameValue);
-    myControllerItemDate.addListener(_printItemNameValue);
   }
 
   void _printItemNameValue () async {
@@ -609,12 +609,14 @@ class _AddNewItemPageState extends State<AddNewItemPage> {
                   textInputAction: TextInputAction.done,
                   style: TextStyle(
                     color: Colors.white,
+                    fontSize: 20.0,
                   ),
                   decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: 'item name',
+                    hintText: 'enter an item name',
                     hintStyle: TextStyle(
                       color: Colors.white,
+                      fontSize: 20.0,
                     ),
                   ),
                 ),
@@ -635,20 +637,25 @@ class _AddNewItemPageState extends State<AddNewItemPage> {
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.75,
                 alignment: Alignment.center,
-                child: TextField(
-                  controller: myControllerItemDate,
-                  textAlign: TextAlign.center,
-                  keyboardType: TextInputType.text,
-                  textInputAction: TextInputAction.done,
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                  
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintText: 'dd/mm/yyyy',
-                    hintStyle: TextStyle(
+                child: FlatButton(
+                  onPressed: () {
+                    showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime(2023)
+                    ).then((value){
+                      log(value.toString());
+                      setState(() {
+                        dateButtonText = DateFormat('dd/MM/yyyy').format(value);
+                      });
+                    });
+                  },
+                  child: Text(
+                    dateButtonText,
+                    style: TextStyle(
                       color: Colors.white,
+                      fontSize: 20.0,
                     ),
                   ),
                 ),
@@ -664,11 +671,10 @@ class _AddNewItemPageState extends State<AddNewItemPage> {
                   RaisedButton(
                     onPressed: () async {
                       log(myControllerItemName.text);
-                      log(myControllerItemDate.text);
                       var fido = Item(
                         itemType: widget.selectedItemIndex.toString(),
                         itemName: myControllerItemName.text,
-                        itemDate: myControllerItemDate.text,
+                        itemDate: dateButtonText,
                         itemAmount: 32
                       );
                       await insertItem(fido);
