@@ -251,9 +251,32 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  // returns the how many day/days left or passed
   int getItemCountdown(String d) {
     var _itemCountdown = DateFormat('dd/MM/yyyy').parse(d).difference(DateTime.now()).inDays;
     return _itemCountdown;
+  }
+
+  // returns the days passed or left situation in string
+  String getItemCountDownStatus(String d) {
+    var _i = this.getItemCountdown(d);
+    if (_i <= 0) {
+      if (_i == 0 || _i == 1) {
+        return ' day passed';
+      }
+      else {
+        return ' days passed';
+      }
+    }
+    else {
+      if (_i == 1) {
+        return ' day left';
+      }
+      else {
+        return ' days left';
+      }
+      
+    }
   }
 
   @override
@@ -321,7 +344,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     //log(listItemsAll.length.toString());
                     //getUserData('all');
                     //log(index.toString() + ': ' + listItems[index].toString());
-                    return ItemWidget(itemType: listItemsAll[indexAll].itemType, itemName: listItemsAll[indexAll].itemName, itemDateTime: listItemsAll[indexAll].itemDate, itemCountdown: getItemCountdown(listItemsAll[indexAll].itemDate));
+                    return ItemWidget(
+                      daysLeftOrPassed: getItemCountDownStatus(listItemsAll[indexAll].itemDate),
+                      itemType: listItemsAll[indexAll].itemType,
+                      itemName: listItemsAll[indexAll].itemName,
+                      itemDateTime: listItemsAll[indexAll].itemDate,
+                      itemCountdown: getItemCountdown(listItemsAll[indexAll].itemDate)
+                    );
                   }
                 ),
               ),
@@ -336,7 +365,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     //log(itemsExpiryList.length.toString());
                     //log(index.toString() + ': ' + listItems[index].toString());
                     if (itemsExpiryList[indexExpiry].itemType == '1'){
-                      return ItemWidget(itemType: itemsExpiryList[indexExpiry].itemType, itemName: itemsExpiryList[indexExpiry].itemName, itemDateTime: itemsExpiryList[indexExpiry].itemDate, itemCountdown: getItemCountdown(listItemsAll[indexExpiry].itemDate));
+                      return ItemWidget(
+                        daysLeftOrPassed: getItemCountDownStatus(listItemsAll[indexExpiry].itemDate),
+                        itemType: itemsExpiryList[indexExpiry].itemType,
+                        itemName: itemsExpiryList[indexExpiry].itemName,
+                        itemDateTime: itemsExpiryList[indexExpiry].itemDate,
+                        itemCountdown: getItemCountdown(listItemsAll[indexExpiry].itemDate)
+                      );
                     }
                     else {
                       return null;
@@ -356,7 +391,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     if (itemsStockList.length > 0) {
                       if (itemsStockList[indexStock].itemType == '2'){
                         //print(itemsStockList);
-                        return ItemWidget(itemType: itemsStockList[indexStock].itemType, itemName: itemsStockList[indexStock].itemName, itemDateTime: itemsStockList[indexStock].itemDate, itemCountdown: getItemCountdown(listItemsAll[indexStock].itemDate));
+                        return ItemWidget(
+                          daysLeftOrPassed: getItemCountDownStatus(listItemsAll[indexStock].itemDate),
+                          itemType: itemsStockList[indexStock].itemType,
+                          itemName: itemsStockList[indexStock].itemName,
+                          itemDateTime: itemsStockList[indexStock].itemDate,
+                          itemCountdown: getItemCountdown(listItemsAll[indexStock].itemDate)
+                        );
                       }
                       else {
                         return null;
@@ -378,7 +419,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemBuilder: (BuildContext ctxtToDo, int indexToDo) {
                     //log(index.toString() + ': ' + listItems[index].toString());
                     if (itemsToDoList[indexToDo].itemType == '3'){
-                      return ItemWidget(itemType: itemsToDoList[indexToDo].itemType, itemName: itemsToDoList[indexToDo].itemName, itemDateTime: itemsToDoList[indexToDo].itemDate, itemCountdown: getItemCountdown(listItemsAll[indexToDo].itemDate));
+                      return ItemWidget(
+                        daysLeftOrPassed: getItemCountDownStatus(listItemsAll[indexToDo].itemDate),
+                        itemType: itemsToDoList[indexToDo].itemType,
+                        itemName: itemsToDoList[indexToDo].itemName,
+                        itemDateTime: itemsToDoList[indexToDo].itemDate,
+                        itemCountdown: getItemCountdown(listItemsAll[indexToDo].itemDate)
+                      );
                     }
                     else {
                       return null;
@@ -396,7 +443,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemBuilder: (BuildContext ctxt, int indexToBuy) {
                     //log(index.toString() + ': ' + listItems[index].toString());
                     if (itemsToBuyList[indexToBuy].itemType == '4'){
-                      return ItemWidget(itemType: itemsToBuyList[indexToBuy].itemType, itemName: itemsToBuyList[indexToBuy].itemName, itemDateTime: itemsToBuyList[indexToBuy].itemDate, itemCountdown: getItemCountdown(listItemsAll[indexToBuy].itemDate));
+                      return ItemWidget(
+                        daysLeftOrPassed: getItemCountDownStatus(listItemsAll[indexToBuy].itemDate),
+                        itemType: itemsToBuyList[indexToBuy].itemType,
+                        itemName: itemsToBuyList[indexToBuy].itemName,
+                        itemDateTime: itemsToBuyList[indexToBuy].itemDate,
+                        itemCountdown: getItemCountdown(listItemsAll[indexToBuy].itemDate)
+                      );
                     }
                     else {
                       return null;
@@ -418,47 +471,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onTap: () async {
                 log('tapped plus: adding new value');
                 //print(await items());
-                /* var fido = Item(
-                  id: 1,
-                  itemType: 'Expiry',
-                  itemName: 'Peynir',
-                  itemDate: '27/05/2023',
-                  itemAmount: 10,
-                );
-
-                // Insert a dog into the database.
-                await insertItem(fido); */
-
-                // Print the list of dogs (only Fido for now).
-                //print(await items());
-
-                // Update Fido's age and save it to the database.
-                /* fido = Item(
-                  id: 2,
-                  itemType: 'Expiry',
-                  itemName: 'Ekmek',
-                  itemDate: '19/09/2021',
-                  itemAmount: 11,
-                );
-                await insertItem(fido); */
-                /* var fido = Item(
-                  id: counter,
-                  itemType: selectedItemIndex.toString(),
-                  itemName: 'Ekmek',
-                  itemDate: '19/09/2021',
-                  itemAmount: 32
-                );
-                counter++;
-                await insertItem(fido); */
-
-                // Delete Fido from the database.
-                //await deleteDog(fido.id);
-
-                // Print the list of dogs (empty).
-                //print(await items());
-
-                //print(await items());
-                
+    
                 //parse datetime example
                 //log(DateFormat('dd/MM/yyyy').parse('01/06/2020').toString());
 

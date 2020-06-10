@@ -8,6 +8,7 @@ class ItemWidget extends StatefulWidget {
   final String itemName;
   final String itemDateTime;
   final int itemCountdown;
+  final String daysLeftOrPassed;
 
   ItemWidget(
     {
@@ -16,6 +17,7 @@ class ItemWidget extends StatefulWidget {
       @required this.itemName,
       @required this.itemDateTime,
       @required this.itemCountdown,
+      @required this.daysLeftOrPassed,
     }
   ): super(key: key);
     @override
@@ -112,14 +114,14 @@ class _ItemWidgetState extends State<ItemWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 Text(
-                  widget.itemDateTime,
+                  'exp: ' + widget.itemDateTime,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 14.0,
                   ),
                 ),
                 Text(
-                  widget.itemCountdown.toString() + ' days',
+                  widget.itemCountdown.toString() + widget.daysLeftOrPassed,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 14.0,
@@ -191,7 +193,7 @@ class _ItemWidgetState extends State<ItemWidget> {
               width: 100.0,
               child: GestureDetector(
                 onTap: () {
-                  log('cancel');
+                  log('cancelled');
                   setState(() {
                     isEditing = false;
                   });
@@ -278,7 +280,7 @@ class SecondRoute extends StatelessWidget {
                   decoration: InputDecoration(
                     
                     border: InputBorder.none,
-                    hintText: 'dd/mm/yyyy',
+                    hintText: 'select a date',
                     hintStyle: TextStyle(
                       color: Colors.white,
                     ),
