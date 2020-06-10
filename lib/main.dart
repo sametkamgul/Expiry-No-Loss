@@ -73,6 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List itemsStockList = [];
   List itemsToDoList = [];
   List itemsToBuyList = [];
+  int itemCountDown = 0;
   
   _MyHomePageState();
 
@@ -250,6 +251,11 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  int getItemCountdown(String d) {
+    var _itemCountdown = DateFormat('dd/MM/yyyy').parse(d).difference(DateTime.now()).inDays;
+    return _itemCountdown;
+  }
+
   @override
   Widget build(BuildContext context) {
     int _selectedItemIndex = 0;
@@ -315,7 +321,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     //log(listItemsAll.length.toString());
                     //getUserData('all');
                     //log(index.toString() + ': ' + listItems[index].toString());
-                    return ItemWidget(itemType: listItemsAll[indexAll].itemType, itemName: listItemsAll[indexAll].itemName, itemDateTime: listItemsAll[indexAll].itemDate, itemCountdown: 9);
+                    return ItemWidget(itemType: listItemsAll[indexAll].itemType, itemName: listItemsAll[indexAll].itemName, itemDateTime: listItemsAll[indexAll].itemDate, itemCountdown: getItemCountdown(listItemsAll[indexAll].itemDate));
                   }
                 ),
               ),
@@ -330,7 +336,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     //log(itemsExpiryList.length.toString());
                     //log(index.toString() + ': ' + listItems[index].toString());
                     if (itemsExpiryList[indexExpiry].itemType == '1'){
-                      return ItemWidget(itemType: itemsExpiryList[indexExpiry].itemType, itemName: itemsExpiryList[indexExpiry].itemName, itemDateTime: itemsExpiryList[indexExpiry].itemDate, itemCountdown: 9);
+                      return ItemWidget(itemType: itemsExpiryList[indexExpiry].itemType, itemName: itemsExpiryList[indexExpiry].itemName, itemDateTime: itemsExpiryList[indexExpiry].itemDate, itemCountdown: getItemCountdown(listItemsAll[indexExpiry].itemDate));
                     }
                     else {
                       return null;
@@ -350,7 +356,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     if (itemsStockList.length > 0) {
                       if (itemsStockList[indexStock].itemType == '2'){
                         //print(itemsStockList);
-                        return ItemWidget(itemType: itemsStockList[indexStock].itemType, itemName: itemsStockList[indexStock].itemName, itemDateTime: itemsStockList[indexStock].itemDate, itemCountdown: 9);
+                        return ItemWidget(itemType: itemsStockList[indexStock].itemType, itemName: itemsStockList[indexStock].itemName, itemDateTime: itemsStockList[indexStock].itemDate, itemCountdown: getItemCountdown(listItemsAll[indexStock].itemDate));
                       }
                       else {
                         return null;
@@ -372,7 +378,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemBuilder: (BuildContext ctxtToDo, int indexToDo) {
                     //log(index.toString() + ': ' + listItems[index].toString());
                     if (itemsToDoList[indexToDo].itemType == '3'){
-                      return ItemWidget(itemType: itemsToDoList[indexToDo].itemType, itemName: itemsToDoList[indexToDo].itemName, itemDateTime: itemsToDoList[indexToDo].itemDate, itemCountdown: 9);
+                      return ItemWidget(itemType: itemsToDoList[indexToDo].itemType, itemName: itemsToDoList[indexToDo].itemName, itemDateTime: itemsToDoList[indexToDo].itemDate, itemCountdown: getItemCountdown(listItemsAll[indexToDo].itemDate));
                     }
                     else {
                       return null;
@@ -390,7 +396,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemBuilder: (BuildContext ctxt, int indexToBuy) {
                     //log(index.toString() + ': ' + listItems[index].toString());
                     if (itemsToBuyList[indexToBuy].itemType == '4'){
-                      return ItemWidget(itemType: itemsToBuyList[indexToBuy].itemType, itemName: itemsToBuyList[indexToBuy].itemName, itemDateTime: itemsToBuyList[indexToBuy].itemDate, itemCountdown: 9);
+                      return ItemWidget(itemType: itemsToBuyList[indexToBuy].itemType, itemName: itemsToBuyList[indexToBuy].itemName, itemDateTime: itemsToBuyList[indexToBuy].itemDate, itemCountdown: getItemCountdown(listItemsAll[indexToBuy].itemDate));
                     }
                     else {
                       return null;
@@ -453,6 +459,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
                 //print(await items());
                 
+                //parse datetime example
+                //log(DateFormat('dd/MM/yyyy').parse('01/06/2020').toString());
+
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => AddNewItemPage(selectedItemIndex: selectedItemIndex)),
@@ -525,7 +534,9 @@ class AddNewItemPage extends StatefulWidget {
 
 class _AddNewItemPageState extends State<AddNewItemPage> {
   final myControllerItemName = TextEditingController();
+  final myControllerItemAmount = TextEditingController();
   String dateButtonText = 'Set Expiry Date';
+  int itemAmount = 0;
 
   @override
   void initState() {
@@ -533,10 +544,11 @@ class _AddNewItemPageState extends State<AddNewItemPage> {
 
     // Start listening to changes.
     myControllerItemName.addListener(_printItemNameValue);
+    myControllerItemAmount.addListener(_printItemNameValue);
   }
 
   void _printItemNameValue () async {
-    //log(myControllerItemName.text + ':' + myControllerItemDate.text);
+    log(myControllerItemName.text + ':' + myControllerItemAmount.text);
   }
 
   refresh() {
@@ -626,6 +638,39 @@ class _AddNewItemPageState extends State<AddNewItemPage> {
             //padding
             Padding(padding: EdgeInsets.all(5.0)),
 
+            Container(
+              decoration: BoxDecoration(
+                color: Color(0xFFC88264),
+                borderRadius: new BorderRadius.all(
+                  Radius.circular(40.0),
+                )
+              ),
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.75,
+                child: TextField(
+                  controller: myControllerItemAmount,
+                  textAlign: TextAlign.center,
+                  keyboardType: TextInputType.text,
+                  textInputAction: TextInputAction.done,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.0,
+                  ),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'enter an item amount',
+                    hintStyle: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.0,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            //padding
+            Padding(padding: EdgeInsets.all(5.0)),
+
             //item-date-texfield
             Container(
               decoration: BoxDecoration(
@@ -643,7 +688,7 @@ class _AddNewItemPageState extends State<AddNewItemPage> {
                       context: context,
                       initialDate: DateTime.now(),
                       firstDate: DateTime.now(),
-                      lastDate: DateTime(2023)
+                      lastDate: DateTime(2030)
                     ).then((value){
                       log(value.toString());
                       setState(() {
@@ -663,39 +708,69 @@ class _AddNewItemPageState extends State<AddNewItemPage> {
             ),
 
             Container(
+              padding: EdgeInsets.only(top: 5.0),
               width: MediaQuery.of(context).size.width * 0.75,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  RaisedButton(
-                    onPressed: () async {
-                      log(myControllerItemName.text);
-                      var fido = Item(
-                        itemType: widget.selectedItemIndex.toString(),
-                        itemName: myControllerItemName.text,
-                        itemDate: dateButtonText,
-                        itemAmount: 32
-                      );
-                      await insertItem(fido);
-                      log('item is added');
-                      log('selected: ' + widget.selectedItemIndex.toString());
-                      Navigator.pop(context);
-                      /* Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MyHomePage(notify: refresh,),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xFFC88264),
+                      borderRadius: new BorderRadius.all(
+                        Radius.circular(40.0),
+                      )
+                    ),
+                    child: FlatButton(
+                      onPressed: () async {
+                        log(myControllerItemName.text);
+                        var _item = Item(
+                          itemType: widget.selectedItemIndex.toString(),
+                          itemName: myControllerItemName.text,
+                          itemDate: dateButtonText,
+                          itemAmount: itemAmount,
+                        );
+                        await insertItem(_item);
+                        log('item is added');
+                        log('selected: ' + widget.selectedItemIndex.toString());
+                        Navigator.pop(context);
+                        /* Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MyHomePage(notify: refresh,),
+                          ),  
+                        ); */
+                      },
+                      child: Text(
+                        'Save',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.0,
+                        ),
+                        ),
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xFFC88264),
+                      borderRadius: new BorderRadius.all(
+                        Radius.circular(40.0),
+                      )
+                    ),
+                    child: FlatButton(
+                      onPressed: () {
+                        Navigator.pop(context, 'saveCancelled');
+                      },
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.0,
                         ),  
-                      ); */
-                    },
-                    child: Text('Save'),
-                  ),
-                  RaisedButton(
-                    onPressed: () {
-                      Navigator.pop(context, 'saveCancelled');
-                    },
-                    child: Text('Cancel'),
-                  ),
+                      ),
+                    ),
+                  )
+                  
                 ],
               ),
             ),
