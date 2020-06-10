@@ -348,7 +348,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       daysLeftOrPassed: getItemCountDownStatus(listItemsAll[indexAll].itemDate),
                       itemType: listItemsAll[indexAll].itemType,
                       itemName: listItemsAll[indexAll].itemName,
-                      itemDateTime: listItemsAll[indexAll].itemDate,
+                      itemDate: listItemsAll[indexAll].itemDate,
                       itemCountdown: getItemCountdown(listItemsAll[indexAll].itemDate)
                     );
                   }
@@ -369,7 +369,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         daysLeftOrPassed: getItemCountDownStatus(listItemsAll[indexExpiry].itemDate),
                         itemType: itemsExpiryList[indexExpiry].itemType,
                         itemName: itemsExpiryList[indexExpiry].itemName,
-                        itemDateTime: itemsExpiryList[indexExpiry].itemDate,
+                        itemDate: itemsExpiryList[indexExpiry].itemDate,
                         itemCountdown: getItemCountdown(listItemsAll[indexExpiry].itemDate)
                       );
                     }
@@ -395,7 +395,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           daysLeftOrPassed: getItemCountDownStatus(listItemsAll[indexStock].itemDate),
                           itemType: itemsStockList[indexStock].itemType,
                           itemName: itemsStockList[indexStock].itemName,
-                          itemDateTime: itemsStockList[indexStock].itemDate,
+                          itemDate: itemsStockList[indexStock].itemDate,
                           itemCountdown: getItemCountdown(listItemsAll[indexStock].itemDate)
                         );
                       }
@@ -423,7 +423,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         daysLeftOrPassed: getItemCountDownStatus(listItemsAll[indexToDo].itemDate),
                         itemType: itemsToDoList[indexToDo].itemType,
                         itemName: itemsToDoList[indexToDo].itemName,
-                        itemDateTime: itemsToDoList[indexToDo].itemDate,
+                        itemDate: itemsToDoList[indexToDo].itemDate,
                         itemCountdown: getItemCountdown(listItemsAll[indexToDo].itemDate)
                       );
                     }
@@ -447,7 +447,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         daysLeftOrPassed: getItemCountDownStatus(listItemsAll[indexToBuy].itemDate),
                         itemType: itemsToBuyList[indexToBuy].itemType,
                         itemName: itemsToBuyList[indexToBuy].itemName,
-                        itemDateTime: itemsToBuyList[indexToBuy].itemDate,
+                        itemDate: itemsToBuyList[indexToBuy].itemDate,
                         itemCountdown: getItemCountdown(listItemsAll[indexToBuy].itemDate)
                       );
                     }

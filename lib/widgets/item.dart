@@ -2,11 +2,13 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:expiry_no_loss/components/constants.dart';
+import 'package:path/path.dart' as Path;
+import 'package:sqflite/sqflite.dart';
 
 class ItemWidget extends StatefulWidget {
   final String itemType;
   final String itemName;
-  final String itemDateTime;
+  final String itemDate;
   final int itemCountdown;
   final String daysLeftOrPassed;
 
@@ -15,7 +17,7 @@ class ItemWidget extends StatefulWidget {
       Key key,
       @required this.itemType,
       @required this.itemName,
-      @required this.itemDateTime,
+      @required this.itemDate,
       @required this.itemCountdown,
       @required this.daysLeftOrPassed,
     }
@@ -24,6 +26,8 @@ class ItemWidget extends StatefulWidget {
   _ItemWidgetState createState() => _ItemWidgetState();
   
 }
+// DELETE FROM Customers WHERE CustomerName='Alfreds Futterkiste';
+
 
 class _ItemWidgetState extends State<ItemWidget> {
   bool isEditing = false;
@@ -32,13 +36,49 @@ class _ItemWidgetState extends State<ItemWidget> {
   int selectedItemIndex = 0;
   Constants constants = new Constants();
 
+  Future<void> deleteItem(String itemName, String itemType, String itemDateTime) async {
+    // Get a reference to the database.
+    final db = await createDatabase();
+
+    // Remove the Dog from the database.
+    await db.delete(
+      'items',
+      // Use a `where` clause to delete a specific dog.
+      where: "itemName = ? AND itemType = ? AND itemDate = ?",
+      // Pass the Dog's id as a whereArg to prevent SQL injection.
+      whereArgs: [itemName, itemType, itemDateTime],
+    );
+  }
+
+  Future<dynamic> createDatabase() async {
+    final database = openDatabase(
+      // Set the path to the database. Note: Using the `join` function from the
+      // `path` package is best practice to ensure the path is correctly
+      // constructed for each platform.
+      
+      Path.join(await getDatabasesPath(), 'items.db'),
+      
+      // When the database is first created, create a table to store dogs.
+      onCreate: (db, version) {
+        return db.execute(
+          "CREATE TABLE items(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, itemType TEXT, itemName TEXT, itemDate TEXT, itemAmount INTEGER)",
+        );
+      },
+      // Set the version. This executes the onCreate function and provides a
+      // path to perform database upgrades and downgrades.
+      version: 1,
+    );
+    return database;
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(bottom: 5.0),
       child: GestureDetector(
         onTap: () {
-          log('tap:       ' + widget.itemType + ', ' + widget.itemName + ', ' + widget.itemDateTime + ', ' + widget.itemCountdown.toString());
+          log('tap:       ' + widget.itemType + ', ' + widget.itemName + ', ' + widget.itemDate + ', ' + widget.itemCountdown.toString());
           if (widget.itemType == '1') {
             setState(() {
               this.selectedItemIndex = 1;
@@ -66,7 +106,7 @@ class _ItemWidgetState extends State<ItemWidget> {
           }
         },
         onLongPress: () {
-          log('longpress: ' + widget.itemType + ', ' + widget.itemName + ', ' + widget.itemDateTime + ', ' + widget.itemCountdown.toString());
+          log('longpress: ' + widget.itemType + ', ' + widget.itemName + ', ' + widget.itemDate + ', ' + widget.itemCountdown.toString());
           setState(() {
             isEditing = true;
           });
@@ -114,7 +154,7 @@ class _ItemWidgetState extends State<ItemWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 Text(
-                  'exp: ' + widget.itemDateTime,
+                  'exp: ' + widget.itemDate,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 14.0,
@@ -180,13 +220,20 @@ class _ItemWidgetState extends State<ItemWidget> {
             Container(
               alignment: Alignment.center,
               width: 100.0,
-              child: Text(
-                'delete',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20.0,
+              child: GestureDetector(
+                onTap: () async {
+                  log('pressed del button');
+                  // TODO: delete the item from database here!!!
+                  await deleteItem(widget.itemName, widget.itemType, widget.itemDate);
+                },
+                child: Text(
+                  'delete',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.0,
+                  ),
                 ),
-              ),
+              )
             ),
             Container(
               alignment: Alignment.center,
