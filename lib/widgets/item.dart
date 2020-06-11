@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:expiry_no_loss/components/dbhelper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:expiry_no_loss/components/constants.dart';
@@ -29,7 +30,6 @@ class ItemWidget extends StatefulWidget {
   _ItemWidgetState createState() => _ItemWidgetState();
   
 }
-// DELETE FROM Customers WHERE CustomerName='Alfreds Futterkiste';
 
 
 class _ItemWidgetState extends State<ItemWidget> {
@@ -53,6 +53,22 @@ class _ItemWidgetState extends State<ItemWidget> {
     );
   }
 
+
+  Future<void> updateItem(Item item) async {
+    // Get a reference to the database.
+    final db = await createDatabase();
+
+    // Update the given Dog.
+    await db.update(
+      'items',
+      item.toMap(),
+      // Ensure that the Dog has a matching id.
+      where: "itemName = ? AND itemType = ? AND itemDate = ?",
+      // Pass the Dog's id as a whereArg to prevent SQL injection.
+      whereArgs: [item.itemName, item.itemType, item.itemDate],
+    );
+  }
+
   Future<dynamic> createDatabase() async {
     final database = openDatabase(
       // Set the path to the database. Note: Using the `join` function from the
@@ -64,7 +80,7 @@ class _ItemWidgetState extends State<ItemWidget> {
       // When the database is first created, create a table to store dogs.
       onCreate: (db, version) {
         return db.execute(
-          "CREATE TABLE items(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, itemType TEXT, itemName TEXT, itemDate TEXT, itemAmount INTEGER)",
+          "CREATE TABLE items(itemType TEXT, itemName TEXT, itemDate TEXT, itemAmount INTEGER)",
         );
       },
       // Set the version. This executes the onCreate function and provides a
@@ -229,7 +245,7 @@ class _ItemWidgetState extends State<ItemWidget> {
               child: GestureDetector(
                 onTap: () async {
                   log('pressed del button');
-                  // TODO: delete the item from database here!!!
+                  // deleting data from database here!!!
                   await deleteItem(widget.itemName, widget.itemType, widget.itemDate);
                 },
                 child: Text(
@@ -268,7 +284,7 @@ class _ItemWidgetState extends State<ItemWidget> {
 }
 
 class ItemActionPage extends StatefulWidget {
-  ItemActionPage({Key key, this.itemName, this.itemDate}) : super(key: key);
+  ItemActionPage({Key key, this.itemDate, this.itemName}) : super(key: key);
   final String itemName;
   final String itemDate;
 
@@ -279,11 +295,75 @@ class ItemActionPage extends StatefulWidget {
 class _ItemActionPageState extends State<ItemActionPage> {
   String editedLabelText = '';
   String _editedLabelText;
+  final myControllerItemName = TextEditingController();
 
   void initState() {
     super.initState();
     editedLabelText = widget.itemDate;
+    myControllerItemName.addListener(_printItemNameValue);
   }
+
+  void _printItemNameValue() async {
+    log('editing_texfield_ItemName: ' + myControllerItemName.text);
+  }
+
+  Future<Item> gettingItemFromDB(String itemName) async {
+    final db = await createDatabase();
+    List<Map> res = await db.rawQuery(
+      "SELECT * FROM items WHERE itemName = ${itemName}"
+    );
+    log('searched_list:\n' + res.toString());
+    return Item(
+        itemType: res[0]['itemType'],
+        itemName: res[0]['itemName'],
+        itemDate: res[0]['itemDate'],
+        itemAmount: res[0]['itemAmount'],
+      );
+  }
+
+  Future<void> updateItem(String _itemNameOld, String _itemDateOld, String _itemName, String _itemDate) async {
+    // Get a reference to the database.
+    final db = await createDatabase();
+
+    Item _oldItem = await gettingItemFromDB(_itemNameOld);
+
+    // Update the given Dog.
+    await db.update(
+      'items',
+      Item(
+        itemType: _oldItem.itemType,
+        itemName: _itemName,
+        itemDate: _itemDate,
+        itemAmount: _oldItem.itemAmount,
+      ).toMap(),
+      // Ensure that the Dog has a matching id.
+      where: "itemName = ? AND itemDate = ?",
+      // Pass the Dog's id as a whereArg to prevent SQL injection.
+      whereArgs: [_itemNameOld, _itemDateOld],
+    );
+  }
+  
+  Future<dynamic> createDatabase() async {
+    final database = openDatabase(
+      // Set the path to the database. Note: Using the `join` function from the
+      // `path` package is best practice to ensure the path is correctly
+      // constructed for each platform.
+      
+      Path.join(await getDatabasesPath(), 'items.db'),
+      
+      // When the database is first created, create a table to store dogs.
+      onCreate: (db, version) {
+        return db.execute(
+          "CREATE TABLE items(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, itemType TEXT, itemName TEXT, itemDate TEXT, itemAmount INTEGER)",
+        );
+      },
+      // Set the version. This executes the onCreate function and provides a
+      // path to perform database upgrades and downgrades.
+      version: 1,
+    );
+    return database;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -314,6 +394,7 @@ class _ItemActionPageState extends State<ItemActionPage> {
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.75,
                 child: TextField(
+                  controller: myControllerItemName,
                   textAlign: TextAlign.center,
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.done,
@@ -377,6 +458,8 @@ class _ItemActionPageState extends State<ItemActionPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
+
+                  // editing save button
                   Container(
                     decoration: BoxDecoration(
                       color: Color(0xFFC88264),
@@ -385,8 +468,10 @@ class _ItemActionPageState extends State<ItemActionPage> {
                       )
                     ),
                     child: FlatButton(
-                      onPressed: () {
+                      onPressed: () async {
                         //TODO: save the edited information here!!!
+                        log('old_values: ' + widget.itemName + ', ' + widget.itemDate);
+                        await updateItem(widget.itemName, widget.itemDate, _editedLabelText, myControllerItemName.text);
                         Navigator.pop(context, 'saveDone');
                       },
                       child: Text(

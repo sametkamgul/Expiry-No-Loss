@@ -8,6 +8,7 @@ import 'widgets/bottomTab.dart';
 import 'components/dbhelper.dart';
 import 'components/constants.dart';
 
+
 void main() {
     runApp(MyApp());
 }
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Expiry: No Loss',
+      title: 'Expire: No More!',
       theme: ThemeData(
         
         primarySwatch: Colors.blue,
@@ -54,6 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+    removeDatabase();
     getUserData('all').then((_) {
       refresh(); // refreshing the page at the beginning
     });
@@ -99,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // When the database is first created, create a table to store dogs.
       onCreate: (db, version) {
         return db.execute(
-          "CREATE TABLE items(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, itemType TEXT, itemName TEXT, itemDate TEXT, itemAmount INTEGER)",
+          "CREATE TABLE items(itemType TEXT, itemName TEXT, itemDate TEXT, itemAmount INTEGER)",
         );
       },
       // Set the version. This executes the onCreate function and provides a
@@ -133,42 +135,12 @@ class _MyHomePageState extends State<MyHomePage> {
     // Convert the List<Map<String, dynamic> into a List<Dog>.
     return List.generate(maps.length, (i) {
       return Item(
-        id: maps[i]['id'],
         itemType: maps[i]['itemType'],
         itemName: maps[i]['itemName'],
         itemDate: maps[i]['itemDate'],
         itemAmount: maps[i]['itemAmount'],
       );
     });
-  }
-
-  Future<void> updateItem(Item item) async {
-    // Get a reference to the database.
-    final db = await createDatabase();
-
-    // Update the given Dog.
-    await db.update(
-      'items',
-      item.toMap(),
-      // Ensure that the Dog has a matching id.
-      where: "id = ?",
-      // Pass the Dog's id as a whereArg to prevent SQL injection.
-      whereArgs: [item.id],
-    );
-  }
-
-  Future<void> deleteItem(int id) async {
-    // Get a reference to the database.
-    final db = await createDatabase();
-
-    // Remove the Dog from the database.
-    await db.delete(
-      'items',
-      // Use a `where` clause to delete a specific dog.
-      where: "id = ?",
-      // Pass the Dog's id as a whereArg to prevent SQL injection.
-      whereArgs: [id],
-    );
   }
 
   Future<dynamic> getUserData (String dataChoice) async {
@@ -235,7 +207,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     else if ( dataChoice == 'all') {
       listItemsAll = await items();
-      //print(listItemsAll);
+      print(listItemsAll);
       return listItemsAll;
     }
     else {
@@ -578,7 +550,7 @@ class _AddNewItemPageState extends State<AddNewItemPage> {
       // When the database is first created, create a table to store dogs.
       onCreate: (db, version) {
         return db.execute(
-          "CREATE TABLE items(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, itemType TEXT, itemName TEXT, itemDate TEXT, itemAmount INTEGER)",
+          "CREATE TABLE items(itemType TEXT, itemName TEXT, itemDate TEXT, itemAmount INTEGER)",
         );
       },
       // Set the version. This executes the onCreate function and provides a
@@ -792,3 +764,4 @@ class _AddNewItemPageState extends State<AddNewItemPage> {
     );
   }
 }
+
