@@ -1,25 +1,24 @@
-<<<<<<< HEAD
-# Expity-No-Loss
-Expiry: No Loss - Flutter Mobile Application.
+# Expiry: No Loss - Flutter Mobile Application.
 =======
-# expiry_no_loss
 
-A new Flutter project.
+"Expiry: No Loss" is A new Flutter project. It aims reducing the waste of food, drink, or any other kind of items that has expiry date on it. When the item is close the end of it's life. The app will alert you in the safe time. Therefore you can consume it before it is a waste.
+You can set the timer for each item by choosing how many days before to notify yourself with an alarm. 
 
-## Getting Started
+## Description
+This is a TODO app
+=======
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
->>>>>>> e5c8153... initial commit
+## Features
+It has following functionalities
+- Saving items with different categories
+- Items has a deadline date
+- can delete, update add items.
+- can list the items by selecting the categories.
+- items storing locally(only on your mobile device.)
+=======
 
 ### TODOs
 - bottom menu has a solid background color. It must be fixed as a transparent. UI problem.
 - item long press functionality: edit, delete UI fix.
+- add cloud base storing capability.
+=======
